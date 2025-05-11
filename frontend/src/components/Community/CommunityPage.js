@@ -119,6 +119,16 @@ const RefreshIcon = () => (
   </svg>
 );
 
+// Utility function to get the correct avatar image URL for user avatars in posts.
+// Ensures avatars always load from the frontend's static assets (public/avatars),
+// preventing 404 errors that occur if the backend domain is used.
+const getAvatarUrl = (avatarPath) => {
+  if (!avatarPath) return `${process.env.PUBLIC_URL}/avatars/avatar_1.png`;
+  return avatarPath.startsWith('/')
+    ? process.env.PUBLIC_URL + avatarPath
+    : avatarPath;
+};
+
 // PostCard Component
 const PostCard = ({ post, onImageClick, onUserClick, onLikePost, onOpenComments, onDeletePost }) => { // Added onDeletePost
   const imagesToDisplay = post.imageUrls ? post.imageUrls.slice(0, 9) : [];
@@ -152,7 +162,8 @@ const PostCard = ({ post, onImageClick, onUserClick, onLikePost, onOpenComments,
   return (
     <div className="post-card">
       <img
-        src={user.avatar ? `${process.env.PUBLIC_URL}${user.avatar}` : `${process.env.PUBLIC_URL}/avatars/avatar_1.png`}
+        // Always use getAvatarUrl to ensure avatars load from the correct location
+        src={getAvatarUrl(user.avatar)}
         alt={user.username || 'Unknown User'}
         className="post-avatar"
         onClick={handleUserClick}
