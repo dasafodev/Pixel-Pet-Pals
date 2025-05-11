@@ -8,8 +8,9 @@ import FriendProfile from './Friends/FriendProfile'; // To display user's own pr
 import defaultMaleAvatar from '../assets/homepage/male_3.png'; // Renamed for clarity
 // Removed import for homePetImage as cat_sleep.png will be referenced from public
 import mailboxIcon from '../assets/homepage/mailbox_2.png';
+import { getAvatarUrl } from '../utils/imageUtils'; // Import the utility function
 
-const DEFAULT_AVATAR_PATH = '/avatars/avatar_1.png';
+const DEFAULT_AVATAR_PATH = '/avatars/avatar_1.png'; // Keep for explicit fallback if needed, though getAvatarUrl handles defaults
 const BACKGROUND_PATH = '/backgrounds/homepage_bg_2.png';
 
 const flameFrames = Array.from({ length: 9 }, (_, i) => `/backgrounds/flame/${i + 1}.png`);
@@ -187,9 +188,9 @@ function Home({ refreshFriends, unreadCounts }) {
 
           {/* Display for User's Chosen Avatar */}
           {userData && (
-            <img 
-              src={`${process.env.PUBLIC_URL}${userData.avatar || DEFAULT_AVATAR_PATH}`}
-              alt="Current User Avatar" 
+            <img
+              src={getAvatarUrl(userData.avatar)} // Use the utility function
+              alt="Current User Avatar"
               style={{
                 position: 'absolute',
                 top: '20px',
@@ -253,7 +254,7 @@ function Home({ refreshFriends, unreadCounts }) {
                 friendRequests.map(req => (
                   <div key={req._id} style={{ marginBottom: '10px', paddingBottom: '10px', borderBottom: '2px solid #000', fontSize: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <img src={`${process.env.PUBLIC_URL}${req.sender.avatar || req.sender.petAvatar || DEFAULT_AVATAR_PATH}`} alt="sender avatar" style={{ width: '30px', height: '30px', border: '2px solid #000', borderRadius: '3px', objectFit: 'cover' }} />
+                      <img src={getAvatarUrl(req.sender.avatar || req.sender.petAvatar)} alt="sender avatar" style={{ width: '30px', height: '30px', border: '2px solid #000', borderRadius: '3px', objectFit: 'cover' }} />
                       <span><strong>{req.sender.username}</strong></span>
                     </div>
                     <div style={{ display: 'flex', gap: '5px' }}>

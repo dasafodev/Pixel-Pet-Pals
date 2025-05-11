@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { getUserPosts } from '../../api';
 import './UserPostsModal.css'; // We'll create this CSS file next
+import { getAvatarUrl } from '../../../utils/imageUtils'; // Import the utility function
 // Re-use PostCard and ImageModal from CommunityPage.js (or import if they were separate)
 
 // Assuming PostCard and ImageModal are defined in CommunityPage.js or accessible globally.
@@ -85,7 +86,7 @@ const UserPostsModal = ({ isOpen, onClose, userId, userName, userAvatar, PostCar
     <div className="user-posts-modal-overlay" onClick={onClose}>
       <div className="user-posts-modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="user-posts-modal-header">
-          {userAvatar && <img src={userAvatar} alt={userName} className="header-avatar" />}
+          {userAvatar && <img src={getAvatarUrl(userAvatar)} alt={userName} className="header-avatar" />}
           <h2>{userName}'s Posts</h2>
           <button onClick={onClose} className="close-btn">&times;</button>
         </div>

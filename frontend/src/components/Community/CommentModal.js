@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { addCommentToPost, getPostById } from '../../api'; // Assuming getPostById fetches comments
 import './CommentModal.css'; // We'll create this CSS file
+import { getAvatarUrl } from '../../utils/imageUtils'; // Import the utility function
 
 const CommentModal = ({ isOpen, onClose, postId }) => {
   const [post, setPost] = useState(null);
@@ -50,18 +51,6 @@ const CommentModal = ({ isOpen, onClose, postId }) => {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  // Utility function to get the correct avatar image URL for comments.
-  // Ensures avatars always load from the frontend's static assets (public/avatars),
-  // preventing 404 errors that occur if the backend domain is used.
-  const getAvatarUrl = (avatarPath) => {
-    // If no avatar is set, use the default avatar image
-    if (!avatarPath) return `${process.env.PUBLIC_URL}/avatars/avatar_1.png`;
-    // If the avatar path starts with '/', treat it as a static asset and prepend PUBLIC_URL
-    return avatarPath.startsWith('/')
-      ? process.env.PUBLIC_URL + avatarPath
-      : avatarPath; // Otherwise, use as-is (for external URLs)
   };
 
   if (!isOpen) return null;
