@@ -50,6 +50,26 @@ Pixel Pet Pals is more than just a bunch of cute pixels (though we have plenty o
 Life’s too short for boring pets—and we’re obsessed with pixels. Inspired by my own kitten and daydreams of strolling through Central Park together, Pixel Pet Pals brings that joy straight to your browser. Adopt and raise an AI-powered pixel cat, wander a cozy pixel park, bump into friends’ pets and chat in real time—your digital companion is always by your side.
 <img width="476" alt="image" src="https://github.com/user-attachments/assets/123c0d2b-be58-45ab-ac4d-bd3c6f4b4daf" />
 
+## Built With 🛠️ 
+
+This pixelated project was brought to life with a sprinkle of magic and these fine technologies:
+
+*   **Frontend:**
+    *   React (for making things *react* to your clicks!)
+    *   JavaScript (the engine under the hood)
+    *   CSS (for all the stylish pixel-perfect layouts)
+    *   React Router (for navigating our digital world)
+*   **Backend:**
+    *   Node.js (keeping the server-side cozy)
+    *   Express.js (for handling all those important requests)
+    *   MongoDB (our trusty database for storing all your pet's vital stats and your brilliant posts)
+    *   Mongoose (for talking to MongoDB without losing our minds)
+*   **Deployment:**
+    *   Vercel (for our speedy frontend delivery!)
+    *   Render (powering our reliable backend services!)
+
+And a whole lotta love for retro gaming aesthetics! 🕹️❤️
+
 ## What's Next? 🚀
 
 Maybe more features, smoother experiences, and maybe even more pixelated goodness are definitely on the horizon! (Unless the pixels go on strike).
