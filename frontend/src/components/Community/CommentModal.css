@@ -1,0 +1,159 @@
+.comment-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050; /* Higher than other modals if needed */
+  padding: 20px;
+  font-family: 'Press Start 2P', monospace;
+}
+
+.comment-modal-content {
+  background-color: #FFF9E6;
+  padding: 25px;
+  border: 4px solid #000;
+  box-shadow: 6px 6px 0px #000;
+  width: 100%;
+  max-width: 550px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  overflow: hidden; /* Prevent content from spilling before list scrolls */
+}
+
+.comment-modal-content h2 {
+  font-size: 18px;
+  margin-top: 0;
+  margin-bottom: 10px;
+  text-align: center;
+  border-bottom: 2px solid #000;
+  padding-bottom: 10px;
+}
+
+.comments-list {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding-right: 10px; /* For scrollbar */
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  border: 2px solid #ccc;
+  padding: 10px;
+  background-color: #fdf5e6; /* Slightly different background for list */
+}
+
+.comments-list::-webkit-scrollbar { width: 8px; }
+.comments-list::-webkit-scrollbar-track { background: #e0e0e0; border-left: 1px solid #000; }
+.comments-list::-webkit-scrollbar-thumb { background: #777; border: 1px solid #000; }
+.comments-list::-webkit-scrollbar-thumb:hover { background: #444; }
+
+.comment-item {
+  display: flex;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed #ccc;
+}
+.comment-item:last-child {
+  border-bottom: none;
+}
+
+.comment-avatar {
+  width: 35px;
+  height: 35px;
+  object-fit: cover;
+  border: 1px solid #000;
+  image-rendering: pixelated;
+  background-color: #eee;
+  flex-shrink: 0; /* Prevent avatar from shrinking */
+}
+
+.comment-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex-grow: 1;
+}
+
+.comment-author {
+  font-weight: bold;
+  font-size: 12px;
+  color: #000;
+}
+
+.comment-text {
+  font-size: 11px;
+  color: #444;
+  line-height: 1.5;
+  word-break: break-word;
+  margin: 0;
+}
+
+.comment-timestamp {
+  font-size: 9px;
+  color: #777;
+  margin-top: 3px;
+}
+
+.add-comment-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 2px solid #000;
+}
+
+.add-comment-section textarea {
+  width: 100%;
+  padding: 8px;
+  border: 2px solid #000;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  background-color: #fff;
+  box-sizing: border-box;
+  resize: vertical;
+  min-height: 60px;
+}
+
+.submit-comment-btn {
+  background-color: #a0e9ff; /* Light blue */
+  /* align-self: flex-end; Removed to allow flex layout with close button */
+}
+.submit-comment-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.modal-close-btn {
+  /* margin-top: 10px; Removed as it's now part of a flex row */
+  background-color: #ddd; /* Grey for cancel/close */
+  /* align-self: center; Removed */
+}
+
+.comment-modal-actions {
+  display: flex;
+  justify-content: space-between; /* Puts Post on right, Close on left (or use flex-end for both right) */
+  align-items: center;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 2px solid #000;
+}
+
+
+.error-message {
+  color: #D8000C; /* Red for errors */
+  background-color: #FFD2D2; /* Light red background */
+  border: 1px solid #D8000C;
+  padding: 8px;
+  font-size: 10px;
+  text-align: center;
+  margin-bottom: 10px;
+}

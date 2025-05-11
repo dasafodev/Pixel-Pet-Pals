@@ -1,0 +1,128 @@
+.add-post-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000; /* Ensure it's on top */
+  font-family: 'Press Start 2P', monospace;
+}
+
+.add-post-modal-content {
+  background-color: #FFF9E6; /* Match page bg */
+  padding: 25px;
+  border: 4px solid #000;
+  box-shadow: 8px 8px 0px #000;
+  width: 90%;
+  max-width: 550px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.add-post-modal-content h2 {
+  font-size: 18px;
+  margin-top: 0;
+  margin-bottom: 10px;
+  text-align: center;
+  color: #000;
+}
+
+.add-post-modal-content textarea {
+  width: calc(100% - 20px); /* Account for padding */
+  padding: 10px;
+  border: 2px solid #000;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px;
+  background-color: #fff;
+  min-height: 80px;
+  resize: vertical;
+}
+
+.image-upload-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.upload-btn {
+  background-color: #A8D8FF !important; /* Use important if .action-btn specificity is an issue */
+  color: #000 !important;
+  padding: 10px 12px !important;
+  font-size: 11px !important;
+  text-align: center;
+  cursor: pointer;
+}
+
+.image-previews {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 5px;
+  max-height: 200px; /* Limit height and make it scrollable if many images */
+  overflow-y: auto;
+  padding: 5px;
+  border: 1px dashed #ccc; /* Optional: visual cue for drop area / preview area */
+}
+
+.image-preview-item {
+  position: relative;
+  width: 80px; /* Adjust size as needed */
+  height: 80px;
+  border: 1px solid #000;
+}
+
+.image-preview-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  image-rendering: pixelated;
+}
+
+.remove-image-btn {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #ff4d4d;
+  color: white;
+  border: 1px solid #000;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  line-height: 18px;
+  text-align: center;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.error-message {
+  color: #ff0000;
+  font-size: 11px;
+  margin-top: 5px;
+  text-align: center;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.modal-actions .action-btn {
+  padding: 10px 15px;
+  font-size: 12px;
+}
+
+.modal-actions .cancel-btn {
+  background-color: #e0e0e0; /* Greyish */
+}
+
+.modal-actions .submit-btn {
+  background-color: #A8D8FF; /* Blue */
+}

@@ -1,0 +1,490 @@
+/* ------------------------- */
+/*        全局样式         */
+/* ------------------------- */
+body {
+  margin: 0;
+  margin-left: 80px; /* 设置左外边距，等于侧边栏的宽度 */
+  padding: 0;
+  font-family: 'Press Start 2P', monospace;
+  background-color: #faebd7;
+  display: flex;
+}
+
+/* 如果需要整个应用的容器 */
+.app-container {
+  display: flex;
+  width: 100%;
+}
+
+/* ------------------------- */
+/*        侧边栏样式       */
+/* ------------------------- */
+.sidebar {
+  background-color: #fefae0;
+  border-right: 4px solid #000;
+  width: 80px;
+  top: 20;                /* 撑满整个高度 */
+  bottom: 0;
+  left: 0;
+
+  height: 100vh;  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 0;
+  box-shadow: 8px 0 0 #000;
+  position: fixed;
+  z-index: 10;
+}
+.sidebar .sidebar-btn {
+  background: none;
+  border: none;
+  margin: 20px 0;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  transition: transform 0.1s ease;
+  position: relative;
+  color: #000;
+  text-decoration: none;
+}
+.sidebar .sidebar-btn:hover {
+  transform: scale(1.2);
+}
+.sidebar .sidebar-btn.active {
+  background-color: #8ecae6;
+  border: 2px solid #000;
+  border-radius: 4px;
+  box-shadow: inset 2px 2px 0 #000;
+}
+
+/* ------------------------- */
+/*     内容区域样式        */
+/* ------------------------- */
+.content-container {
+  background-color: #fefae0;
+  border: 4px solid #000;
+  width: 1000px;
+  margin: 60px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 8px 8px 0px #000;
+}
+
+/* ------------------------- */
+/*       聊天框样式        */
+/* ------------------------- */
+.chat-box {
+  background-color: #fff;
+  border: 3px solid #000;
+  padding: 10px;
+  height: 220px;
+  overflow-y: auto;
+  font-size: 10px;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.bubble {
+  background-color: #fff;
+  border: 3px solid #000;
+  padding: 6px;
+  max-width: 80%;
+  word-wrap: break-word;
+}
+.bubble.you {
+  align-self: flex-end;
+}
+.bubble.pet,
+.bubble.friend {
+  align-self: flex-start;
+}
+
+/* ------------------------- */
+/*       输入区样式        */
+/* ------------------------- */
+.input-area {
+  display: flex;
+  margin-top: 5px;
+}
+.input-area input {
+  flex: 1;
+  padding: 10px;
+  border: 3px solid #000;
+  font-family: 'Press Start 2P';
+  font-size: 10px;
+}
+.input-area button {
+  background-color: #8ecae6;
+  font-family: 'Press Start 2P';
+  font-size: 10px;
+  padding: 10px;
+  border: 3px solid #000;
+  margin-left: 10px;
+  cursor: pointer;
+  box-shadow: 2px 2px 0px #000;
+}
+
+/* ------------------------- */
+/*   聊天页面左右布局      */
+/* ------------------------- */
+.chat-page-container {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  margin: 40px auto;
+}
+
+/* 右侧面板：聊天内容、输入区、状态栏 */
+.right-panel {
+  flex: 1;
+  background-color: #fefae0;
+  border: 4px solid #000; /* Standardized border */
+  box-shadow: 4px 4px 0px #000; /* Standardized shadow */
+  padding: 20px;
+  min-height: 500px; /* Standardized height */
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ------------------------- */
+/*       状态栏样式        */
+/* ------------------------- */
+.status-bar {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  margin-top: 10px;
+}
+.bar-label {
+  margin-bottom: 5px;
+}
+.bar {
+  width: 130px;
+  height: 10px;
+  border: 2px solid #000;
+  background-color: #fff;
+  margin-top: 5px;
+  position: relative;
+}
+.mood-fill {
+  height: 100%;
+  background-color: #ef476f;
+}
+.bond-fill {
+  height: 100%;
+  background-color: #f4978e;
+}
+
+/* ------------------------- */
+/*       左侧面板样式       */
+/* ------------------------- */
+.left-panel {
+  width: 280px;  /* 固定宽度 */
+  background-color: #fefae0;
+  border: 4px solid #000; /* Standardized border */
+  box-shadow: 4px 4px 0px #000; /* Standardized shadow */
+  padding: 10px;
+  min-height: 500px; /* Standardized height */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 宠物区域（左侧面板内） */
+.left-panel .pet-area {
+  position: relative;
+  width: 250px;
+  height: 350px;
+  margin: 0 auto;
+  background-image: url('./assets/friends_bg/bg_3.png'); /* Changed to bg_3.png from assets */
+  background-size: cover;
+  background-position: center;
+  margin-top: 20%;
+  border: 2px solid #000;
+}
+
+.left-panel .pet-area .floor {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 220px;
+}
+
+/* 使宠物居中，调整离底距离 */
+.left-panel .pet-area .cat {
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40%;
+  height: auto;
+  transition: transform 0.2s ease;
+}
+.left-panel .pet-area .cat:hover {
+  transform: translateX(-50%) scale(1.05);
+}
+.left-panel .pet-area .cat:active {
+  transform: translateX(-50%) scale(0.95) rotate(-2deg);
+}
+
+/* 左侧面板内按钮组 */
+.left-panel .buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  margin-top: 30px;
+  justify-content: center;
+}
+.left-panel .buttons button {
+  font-family: 'Press Start 2P';
+  font-size: 10px;
+  padding: 8px;
+  border: 3px solid #000;
+  background-color: #8ecae6;
+  cursor: pointer;
+  box-shadow: 2px 2px 0px #000;
+}
+
+/* ------------------------- */
+/*       好友模块样式       */
+/* ------------------------- */
+
+/* 好友列表样式 */
+.friends-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.friends-search {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.friends-search input {
+  flex: 1;
+  padding: 10px;
+  border: 3px solid #000;
+  font-family: 'Press Start 2P';
+  font-size: 10px;
+}
+
+.friends-search button {
+  background-color: #8ecae6;
+  font-family: 'Press Start 2P';
+  font-size: 10px;
+  padding: 10px;
+  border: 3px solid #000;
+  cursor: pointer;
+  box-shadow: 2px 2px 0px #000;
+}
+
+.friends-container {
+  border: 3px solid #000;
+  background-color: #fff;
+  padding: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.friend-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 2px solid #000;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.friend-item:last-child {
+  border-bottom: none;
+}
+
+.friend-item:hover {
+  background-color: #f0f0f0;
+}
+
+.friend-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.friend-avatar {
+  font-size: 24px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fefae0;
+  border: 2px solid #000;
+  border-radius: 4px;
+}
+
+.friend-nickname {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.chat-button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.chat-button:hover {
+  transform: scale(1.2);
+}
+
+/* 好友资料页样式 */
+.friend-profile {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.profile-header {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.back-button {
+  align-self: flex-start;
+  background-color: #8ecae6;
+  font-family: 'Press Start 2P';
+  font-size: 10px;
+  padding: 8px;
+  border: 3px solid #000;
+  cursor: pointer;
+  box-shadow: 2px 2px 0px #000;
+}
+
+.profile-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  border: 3px solid #000;
+  background-color: #fff;
+}
+
+.profile-avatar {
+  font-size: 64px;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fefae0;
+  border: 3px solid #000;
+  border-radius: 8px;
+}
+
+.profile-details {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.profile-info {
+  border-bottom: 2px dashed #000;
+  padding-bottom: 10px;
+}
+
+.profile-info h3 {
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+
+.profile-info p {
+  font-size: 12px;
+}
+
+.bio-text {
+  line-height: 1.5;
+}
+
+/* 好友聊天页样式 */
+.friend-chat {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.chat-header {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chat-content {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.chat-pets {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: #fefae0;
+  border: 3px solid #000;
+}
+
+.chat-pet {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.pet-avatar {
+  font-size: 24px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  border: 2px solid #000;
+  border-radius: 4px;
+}
+
+.pet-name {
+  font-size: 10px;
+}
+
+/* 好友推荐样式 */
+.friend-recommendations {
+  margin-top: 20px;
+  padding: 15px;
+  border: 3px solid #000;
+  background-color: #fefae0;
+}
+
+.friend-recommendations h3 {
+  font-size: 14px;
+  margin-bottom: 10px;
+}

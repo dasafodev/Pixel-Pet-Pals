@@ -1,0 +1,322 @@
+/* Main Content Container for Community Page - Styled like .chat-page-container */
+.community-page-main-content {
+  display: flex;
+  gap: 20px; /* Consistent with .chat-page-container */
+  width: 100%; 
+  /* padding: 20px; */ /* REMOVED padding to match .chat-page-container behavior */
+  background-color: #FFF9E6; /* Page background - can be adjusted if needed, FriendChat's container is transparent */
+  font-family: 'Press Start 2P', monospace;
+  box-sizing: border-box;
+  margin: 40px auto; /* Aligning with .chat-page-container's margin */
+  max-width: 1200px; /* Optional: Retaining max-width */
+  /* Note: .left-panel (formerly .community-pet-display-panel) styles are now in styles.css */
+}
+
+/* CommunityFeedPanel Styles - Styled like .right-panel */
+.community-feed-panel {
+  flex: 1; /* Use flex:1 like .right-panel for flexible width */
+  min-height: 500px; 
+  background-color: #fefae0; /* CHANGED to match .right-panel background-color from styles.css */
+  border: 4px solid #000; 
+  padding: 20px; /* This is internal padding for the feed panel, consistent with .right-panel */
+  display: flex;
+  flex-direction: column;
+  box-shadow: 4px 4px 0px #000; 
+  gap: 10px; /* Reduced gap for tighter spacing between header, toolbar, and list */
+}
+
+.loading-indicator, .end-of-feed {
+  text-align: center;
+  padding: 15px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px;
+  color: #555;
+}
+
+.action-btn {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px;
+  padding: 10px 15px;
+  border: 2px solid #000;
+  cursor: pointer;
+  box-shadow: 2px 2px 0px #000;
+  text-transform: uppercase;
+  background-color: #DDDDDD;
+  color: #000;
+}
+.action-btn:active {
+  box-shadow: inset 2px 2px 0px #000;
+  transform: translate(1px, 1px);
+}
+.feed-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  padding-bottom: 0px;
+  /* border-bottom: 2px solid #000; */ /* Removed line under header */
+}
+.feed-header h2 {
+  font-family: 'Press Start 2P', monospace;
+  font-weight: bold;
+  color: #000;
+  font-size: 18px;
+  margin: 0;
+}
+.add-post-btn { 
+  background-color: #8ecae6; /* Blue background */
+}
+
+.search-btn {
+  background-color: #c1e78c; /* A light green, for example */
+}
+
+.clear-search-btn {
+  background-color: #fca5a5; /* A light red, for example */
+}
+
+.feed-toolbar {
+  display: flex;
+  gap: 10px; /* Reduced gap between items in toolbar */
+  margin-bottom: 10px; /* Reduced space below toolbar */
+  align-items: center;
+}
+.search-input {
+  font-family: 'Press Start 2P', monospace;
+  width: 70%;
+  padding: 8px;
+  border: 3px solid #000;
+  font-size: 12px;
+  background-color: #fff;
+}
+.search-input::placeholder {
+  color: #777;
+  font-family: 'Press Start 2P', monospace;
+}
+
+/* PostList and PostCard Styles */
+.post-list {
+  flex-grow: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-right: 5px;
+  height: 0; /* Added to help flexbox calculate scroll height */
+}
+.post-list::-webkit-scrollbar { width: 8px; }
+.post-list::-webkit-scrollbar-track { background: #f0f0f0; border-left: 2px solid #000; }
+.post-list::-webkit-scrollbar-thumb { background: #888; border: 2px solid #000; }
+.post-list::-webkit-scrollbar-thumb:hover { background: #555; }
+
+.post-card {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  border: 3px solid #000;
+  background-color: #fff;
+}
+.post-avatar {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border: 1px solid #000;
+  image-rendering: pixelated;
+  background-color: #eee;
+}
+.post-content-area {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+.post-author-name {
+  font-family: 'Press Start 2P', monospace;
+  font-weight: bold;
+  font-size: 14px;
+  color: #000;
+  margin-bottom: 4px;
+}
+.post-text {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: #555555;
+  margin-bottom: 8px;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+/* Image Thumbnails Container - WeChat Moments Style */
+.post-images-container {
+  display: grid;
+  gap: 4px; /* G = 4px */
+  margin-bottom: 8px;
+}
+
+.post-image-item { /* This class is directly on the <img> tag */
+  border: 1px solid #000;
+  image-rendering: pixelated;
+  object-fit: cover; 
+  cursor: pointer;
+  width: 100%; 
+  height: 100%; 
+  aspect-ratio: 1 / 1; 
+  display: block; /* Ensure it's treated as a block-level element for layout */
+  background-color: #f0f0f0; /* Light placeholder color if image fails to load */
+}
+
+/* Specific layouts based on image count */
+.images-count-1 {
+  grid-template-columns: minmax(0, 0.7fr); /* 70% of container width */
+  justify-content: flex-start; /* Align single image to the left */
+}
+.images-count-1 .post-image-item {
+  aspect-ratio: auto; /* Let original aspect ratio determine height */
+  object-fit: contain; /* Show whole image for single */
+  max-height: 250px; /* Optional max height for very tall single images */
+  width: auto; /* Allow it to shrink if height is constrained by max-height */
+  max-width: 100%; /* Ensure it doesn't overflow its 0.7fr column */
+}
+
+.images-count-2 { grid-template-columns: repeat(2, 1fr); }
+.images-count-3 { grid-template-columns: repeat(3, 1fr); }
+.images-count-4 { grid-template-columns: repeat(2, 1fr); } /* 2x2 grid */
+
+/* For 5, 6, 7, 8, 9 images, use 3 columns. Grid will handle left-alignment of last row. */
+.images-count-5,
+.images-count-6,
+.images-count-7,
+.images-count-8,
+.images-count-9 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* The .post-image-item will be square due to aspect-ratio: 1/1 and width/height 100% of grid cell */
+/* Grid automatically handles left alignment for incomplete rows. */
+
+.post-timestamp {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: #888888;
+  margin-top: auto; /* Pushes timestamp to the bottom if post-footer has extra space */
+  text-align: right; /* Aligns timestamp to the right */
+}
+
+.post-footer {
+  display: flex;
+  justify-content: space-between; /* Puts interaction on left, timestamp on right */
+  align-items: center; /* Vertically aligns items in the footer */
+  margin-top: 10px; /* Adds some space above the footer */
+  padding-top: 8px; /* Optional: add some padding above the footer content */
+  border-top: 1px solid #eee; /* Optional: a light separator line */
+}
+
+.interaction-group {
+  display: flex;
+  align-items: center; /* Align buttons horizontally */
+  gap: 15px; /* Space between like and comment buttons */
+}
+
+.interaction-button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px; /* Space between icon and count */
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px; /* Match timestamp or adjust as needed */
+  color: #555; /* Default icon/text color */
+}
+
+.interaction-button svg {
+  width: 20px; /* Adjust icon size if needed */
+  height: 20px;
+  fill: currentColor; /* SVG uses text color */
+}
+
+.interaction-button.liked svg {
+  fill: #ff6b6b; /* Color for liked state, e.g., red */
+}
+.interaction-button.liked span {
+  color: #ff6b6b; /* Match text color to icon when liked */
+}
+
+.interaction-button:hover svg,
+.interaction-button:hover span {
+  color: #000; /* Darken on hover */
+}
+
+
+.empty-state {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 14px;
+  color: #888888;
+  text-align: center;
+  padding: 40px 20px;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.load-more-container {
+  display: flex;
+  justify-content: center;
+  padding-top: 15px;
+  margin-top: auto;
+}
+
+/* Image Modal Styles */
+.image-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000; /* Ensure it's on top */
+  padding: 20px;
+}
+
+.image-modal-content {
+  position: relative;
+  background-color: #FFF9E6; /* Match page bg */
+  padding: 20px;
+  border: 4px solid #000;
+  box-shadow: 8px 8px 0px #000;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex; /* For centering image if it's smaller than max-width/height */
+  align-items: center;
+  justify-content: center;
+}
+
+.image-modal-content img {
+  max-width: 100%;
+  max-height: calc(90vh - 80px); /* Account for padding and close button */
+  object-fit: contain;
+  image-rendering: pixelated; /* Keep pixelated look for enlarged image */
+  border: 2px solid #000;
+}
+
+.image-modal-close-btn {
+  position: absolute;
+  top: -10px; /* Position outside the border slightly */
+  right: -10px;
+  background-color: #A8D8FF;
+  border: 2px solid #000;
+  color: #000;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 14px;
+  padding: 5px 8px;
+  cursor: pointer;
+  box-shadow: 2px 2px 0px #000;
+}
+.image-modal-close-btn:active {
+  box-shadow: inset 1px 1px 0px #000;
+  transform: translate(1px, 1px);
+}

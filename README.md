@@ -1,70 +1,63 @@
-# Getting Started with Create React App
+# Pet Social Platform
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Hi!This is Marlon and welcome to the Pet Social Platform! This is a full-stack application designed as a social network for pet owners, allowing them to connect, share, and chat. The platform includes features like user profiles, pet profiles, a friend system, real-time messaging, and an AI-powered chat assistant.
 
-## Available Scripts
+## Project Structure
 
-In the project directory, you can run:
+This project is organized into two main parts:
 
-### `npm start`
+-   `backend/`: Contains the Node.js and Express.js API server that handles business logic, database interactions, and serves data to the frontend.
+-   `frontend/`: Contains the client-side application (likely built with React) that provides the user interface.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Prerequisites
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Before you begin, ensure you have the following installed on your system:
 
-### `npm test`
+-   [Git](https://git-scm.com/): For cloning the repository.
+-   [Node.js](https://nodejs.org/): (which includes npm, the Node Package Manager) for running both the backend and frontend.
+-   [MongoDB](https://www.mongodb.com/try/download/community): A running MongoDB instance is required for the backend to store data. You can install it locally or use a cloud-based service like MongoDB Atlas.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Getting Started
 
-### `npm run build`
+To get the Pet Social Platform up and running on your local machine, follow these steps in order:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 1. Clone the Repository (If you haven't already)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+If you don't have the project files yet, clone them from the source:
+```bash
+git clone <repository_url>
+cd <project_directory_name>
+```
+(Replace `<repository_url>` and `<project_directory_name>` accordingly. If you already have the files, you can skip this step.)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 2. Set Up and Run the Backend
 
-### `npm run eject`
+The backend server must be running before you can use the frontend application.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+-   Navigate to the `backend` directory:
+    ```bash
+    cd backend
+    ```
+-   Follow the detailed instructions in the `backend/README.md` file to install dependencies, configure environment variables (including your MongoDB connection string and `GROQ_API_KEY`), and start the server.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+    **Key file**: `backend/README.md`
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### 3. Set Up and Run the Frontend
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Once the backend server is running:
 
-## Learn More
+-   Navigate to the `frontend` directory (from the project root):
+    ```bash
+    cd frontend 
+    ```
+    (If you are in the `backend` directory, you can use `cd ../frontend`)
+-   Follow the detailed instructions in the `frontend/README.md` file to install dependencies, configure environment variables (ensuring `REACT_APP_API_URL` points to your running backend), and start the frontend development server.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+    **Key file**: `frontend/README.md`
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## How It Works
 
-### Code Splitting
+1.  The **backend** server connects to a MongoDB database to store and retrieve user data, messages, friend relationships, etc. It exposes a RESTful API for these operations and also handles real-time communication via Socket.IO for messaging and AI chat interactions.
+2.  The **frontend** application makes requests to the backend API to fetch and display data, and to send user actions. It provides an interactive user interface in the web browser.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+By following the README files in each respective directory, you should be able to get both parts of the application running and explore all its features.
