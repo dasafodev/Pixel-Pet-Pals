@@ -98,11 +98,10 @@ function Home({ refreshFriends, unreadCounts }) {
     }
   };
 
-  const handleAvatarClick = () => setShowEditUserProfileModal(true); // Open user profile modal
+  const handleAvatarClick = () => setShowEditUserProfileModal(true);
   const handlePetImageClick = () => setShowEditPetModal(true);
 
-  const petImagePath = process.env.PUBLIC_URL + '/pets/cat_sleep.png'; // Use cat_sleep.png from public folder
-  const avatarImagePath = defaultMaleAvatar; // This is the static entry point for editing profile
+  const petImagePath = process.env.PUBLIC_URL + '/pets/cat_sleep.png';
   const currentMailboxIcon = mailboxIcon; 
   const friendRequestCount = friendRequests.length;
 
@@ -147,7 +146,7 @@ function Home({ refreshFriends, unreadCounts }) {
           />
 
           <img
-            src={avatarImagePath}
+            src={defaultMaleAvatar}
             alt="User Avatar"
             onClick={handleAvatarClick}
             style={{ 
@@ -187,9 +186,9 @@ function Home({ refreshFriends, unreadCounts }) {
           </div>
 
           {/* Display for User's Chosen Avatar */}
-          {userData.avatar && (
+          {userData && (
             <img 
-              src={`${process.env.PUBLIC_URL}${userData.avatar}`} 
+              src={`${process.env.PUBLIC_URL}${userData.avatar || DEFAULT_AVATAR_PATH}`}
               alt="Current User Avatar" 
               style={{
                 position: 'absolute',
@@ -197,12 +196,11 @@ function Home({ refreshFriends, unreadCounts }) {
                 right: '5px',
                 width: '80px',
                 height: '80px',
-
-                cursor: 'pointer', // Make it clickable
-                zIndex: 10 // Ensure it's above other elements if needed
+                cursor: 'pointer',
+                zIndex: 10
               }}
               title="View your profile"
-              onClick={() => setShowMyProfileView(true)} // Show own profile view
+              onClick={() => setShowMyProfileView(true)}
             />
           )}
 
@@ -255,7 +253,7 @@ function Home({ refreshFriends, unreadCounts }) {
                 friendRequests.map(req => (
                   <div key={req._id} style={{ marginBottom: '10px', paddingBottom: '10px', borderBottom: '2px solid #000', fontSize: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <img src={`${process.env.PUBLIC_URL}${req.sender.petAvatar || DEFAULT_AVATAR_PATH}`} alt="sender avatar" style={{ width: '30px', height: '30px', border: '2px solid #000', borderRadius: '3px', objectFit: 'cover' }} />
+                      <img src={`${process.env.PUBLIC_URL}${req.sender.avatar || req.sender.petAvatar || DEFAULT_AVATAR_PATH}`} alt="sender avatar" style={{ width: '30px', height: '30px', border: '2px solid #000', borderRadius: '3px', objectFit: 'cover' }} />
                       <span><strong>{req.sender.username}</strong></span>
                     </div>
                     <div style={{ display: 'flex', gap: '5px' }}>

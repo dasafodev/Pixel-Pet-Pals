@@ -113,11 +113,18 @@ function FriendsList({ friends, refreshFriends, unreadCounts, onSelectFriend, on
                 style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, position: 'relative' }}
                 onClick={() => handleSelectFriend(friend)}
               >
-                {/* Use petAvatar from API data */}
+                {/* Use avatar from API data, fallback to default */}
                 <img 
-                  src={friend.petAvatar ? `${process.env.PUBLIC_URL}${friend.petAvatar}` : `${process.env.PUBLIC_URL}/avatars/avatar_1.png`} 
+                  src={friend.avatar ? `${process.env.PUBLIC_URL}${friend.avatar}` : `${process.env.PUBLIC_URL}/avatars/avatar_1.png`} 
                   alt={`${friend.username}'s avatar`}
-                  style={{ width: '40px', height: '40px', border: '2px solid #000', borderRadius: '4px', objectFit: 'cover' }} 
+                  style={{ 
+                    width: '40px', 
+                    height: '40px', 
+                    border: '2px solid #000', 
+                    borderRadius: '4px', 
+                    objectFit: 'cover',
+                    backgroundColor: '#fefae0' // Add background color for consistency
+                  }} 
                 />
                 {/* 未读消息数字badge */}
                 {unreadCounts && unreadCounts[friend._id] > 0 && (

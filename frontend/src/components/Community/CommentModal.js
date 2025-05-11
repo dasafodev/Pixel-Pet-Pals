@@ -66,7 +66,7 @@ const CommentModal = ({ isOpen, onClose, postId }) => {
             post.comments.map((comment) => (
               <div key={comment._id || comment.id} className="comment-item">
                 <img 
-                  src={comment.user?.avatar || comment.user?.petAvatar || `${process.env.PUBLIC_URL}/avatars/avatar_1.png`} 
+                  src={comment.user?.avatar || `${process.env.PUBLIC_URL}/avatars/avatar_1.png`} // Prioritize user.avatar
                   alt={comment.user?.username || 'User'} 
                   className="comment-avatar"
                 />

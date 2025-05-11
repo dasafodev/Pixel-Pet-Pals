@@ -34,9 +34,9 @@ function FriendChat({ friend, currentUser, onBack }) {
   };
 
   // 获取当前用户和好友的头像和昵称
-  const myAvatar = currentUser && currentUser.petAvatar ? `${process.env.PUBLIC_URL}${currentUser.petAvatar}` : `${process.env.PUBLIC_URL}/avatars/avatar_1.png`;
+  const myAvatar = currentUser && currentUser.avatar ? `${process.env.PUBLIC_URL}${currentUser.avatar}` : `${process.env.PUBLIC_URL}/avatars/avatar_1.png`;
   const myName = currentUser && currentUser.username ? currentUser.username : 'You';
-  const friendAvatar = friend && friend.petAvatar ? `${process.env.PUBLIC_URL}${friend.petAvatar}` : `${process.env.PUBLIC_URL}/avatars/avatar_1.png`;
+  const friendAvatar = friend && friend.avatar ? `${process.env.PUBLIC_URL}${friend.avatar}` : `${process.env.PUBLIC_URL}/avatars/avatar_1.png`;
   const friendName = friend && friend.username ? friend.username : 'Friend';
 
   useEffect(() => {
@@ -161,7 +161,18 @@ function FriendChat({ friend, currentUser, onBack }) {
           {messages.map((msg, index) => (
             <div key={index} className={`bubble-row ${msg.sender === 'you' ? 'you-row' : 'other-row'}`} style={{ display: 'flex', alignItems: 'flex-end', marginBottom: '8px', flexDirection: msg.sender === 'you' ? 'row-reverse' : 'row' }}>
               {/* 头像 */}
-              <img src={msg.sender === 'you' ? myAvatar : friendAvatar} alt="avatar" style={{ width: 32, height: 32, borderRadius: '50%', margin: msg.sender === 'you' ? '0 0 0 4px' : '0 4px 0 0' }} />
+              <img 
+                src={msg.sender === 'you' ? myAvatar : friendAvatar} 
+                alt="avatar" 
+                style={{ 
+                  width: 32, 
+                  height: 32, 
+                  borderRadius: '50%', 
+                  margin: msg.sender === 'you' ? '0 0 0 4px' : '0 4px 0 0',
+                  border: '2px solid #000',
+                  objectFit: 'cover'
+                }} 
+              />
               <div>
                 {/* 昵称 */}
                 <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#333', marginBottom: '2px', textAlign: msg.sender === 'you' ? 'right' : 'left' }}>

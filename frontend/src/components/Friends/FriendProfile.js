@@ -5,8 +5,7 @@ function FriendProfile({ friend, onBack, isCurrentUser = false }) { // Added isC
   if (!friend) return null;
 
   const profileTitle = isCurrentUser ? "Your Profile" : (friend.username ? `${friend.username}'s` : "Friend's") + " Profile";
-  // For current user, display their main avatar. For friends, display their petAvatar as before.
-  const avatarSrc = isCurrentUser ? friend.avatar : friend.petAvatar;
+  const avatarSrc = friend.avatar ? `${process.env.PUBLIC_URL}${friend.avatar}` : `${process.env.PUBLIC_URL}/avatars/avatar_1.png`;
   const altText = `${friend.username || (isCurrentUser ? 'Your' : 'Friend')}'s avatar`;
   
   return (
@@ -57,15 +56,15 @@ function FriendProfile({ friend, onBack, isCurrentUser = false }) { // Added isC
       }}>
         {avatarSrc ? (
           <img 
-            src={`${process.env.PUBLIC_URL}${avatarSrc}`} 
+            src={avatarSrc}
             alt={altText} 
             style={{
               width: '100px',
               height: '100px',
-              objectFit: 'cover', // Ensures the image covers the area, might crop
+              objectFit: 'cover',
               border: '3px solid #000',
               borderRadius: '8px',
-              backgroundColor: '#fefae0', // Fallback background
+              backgroundColor: '#fefae0',
               transition: 'transform 0.2s'
             }}
             onMouseOver={(e) => {

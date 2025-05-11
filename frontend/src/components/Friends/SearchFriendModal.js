@@ -110,8 +110,8 @@ function SearchFriendModal({ isOpen, onClose, onChatFriend }) {
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <img 
-                  src={user.petAvatar ? `${process.env.PUBLIC_URL}${user.petAvatar}` : `${process.env.PUBLIC_URL}/avatars/avatar_1.png`} // Default if no avatar
-                  alt={`${user.username}'s pet avatar`}
+                  src={user.avatar ? `${process.env.PUBLIC_URL}${user.avatar}` : `${process.env.PUBLIC_URL}/avatars/avatar_1.png`} 
+                  alt={`${user.username}'s avatar`}
                   style={{ width: '35px', height: '35px', border: '2px solid #000', borderRadius: '4px', objectFit: 'cover' }} 
                 />
                 <span style={{ fontSize: '12px', fontWeight: 'bold' }}>{user.username} ({user.petName})</span>

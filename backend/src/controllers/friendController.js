@@ -223,7 +223,7 @@ exports.getFriends = async (req, res) => {
   try {
     // Get user with populated friends
     const user = await User.findById(req.user.id)
-      .populate('friends', 'username petName petAvatar bio');
+      .populate('friends', 'username avatar petName bio');
     
     res.status(200).json({
       success: true,

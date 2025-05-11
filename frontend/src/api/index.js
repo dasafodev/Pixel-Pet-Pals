@@ -1,25 +1,13 @@
 import axios from 'axios';
 import io from 'socket.io-client';
 
-// Assuming REACT_APP_API_URL is like "https://your-backend.onrender.com/api" or "http://localhost:5001/api"
-const API_URL_WITH_PATH = process.env.REACT_APP_API_URL || 'http://localhost:5001/api';
-
-// Derive base URL for Socket.IO and static assets by removing /api if present
-let BASE_URL_FOR_SOCKETS_AND_ASSETS = API_URL_WITH_PATH;
-if (API_URL_WITH_PATH.endsWith('/api')) {
-  BASE_URL_FOR_SOCKETS_AND_ASSETS = API_URL_WITH_PATH.substring(0, API_URL_WITH_PATH.length - '/api'.length);
-} else if (API_URL_WITH_PATH.endsWith('/api/')) {
-  BASE_URL_FOR_SOCKETS_AND_ASSETS = API_URL_WITH_PATH.substring(0, API_URL_WITH_PATH.length - '/api/'.length);
-}
-// For local development, if REACT_APP_API_URL is not set, it defaults to http://localhost:5001/api
-// In this case, BASE_URL_FOR_SOCKETS_AND_ASSETS becomes http://localhost:5001
-export const DERIVED_BASE_URL = BASE_URL_FOR_SOCKETS_AND_ASSETS; // Export for use elsewhere
-
+const BASE_BACKEND_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+const API_URL = `${BASE_BACKEND_URL}/api`; // Append /api for Axios
 let socket;
 
 // Create axios instance
 const api = axios.create({
-  baseURL: API_URL_WITH_PATH, // Axios uses the full path including /api
+  baseURL: API_URL, // Axios still uses the /api path
   headers: {
     'Content-Type': 'application/json'
   }
@@ -39,7 +27,7 @@ api.interceptors.request.use(
 
 // Socket.io connection
 export const connectSocket = (userId) => {
-  socket = io(BASE_URL_FOR_SOCKETS_AND_ASSETS); // Socket connects to the derived base URL
+  socket = io(BASE_BACKEND_URL); // Socket connects to the base URL
   
   if (userId) {
     socket.emit('join', userId);

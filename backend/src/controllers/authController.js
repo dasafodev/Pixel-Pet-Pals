@@ -24,11 +24,8 @@ exports.register = async (req, res) => {
       email,
       password,
       petName,
-      avatar: petAvatar, // Save the chosen avatar to the 'avatar' field
-      // If petAvatar is meant to be distinct and also chosen at registration, handle it here.
-      // Otherwise, it will take its default from the User model.
-      // For now, let's assume the registration avatar is the main user.avatar.
-      // The User model defaults petAvatar to '/pets/pet_1.png'.
+      avatar: petAvatar || '/avatars/avatar_1.png', // Save chosen avatar to main avatar field
+      petAvatar: petAvatar || '/avatars/avatar_1.png' // Also set petAvatar to the same
     });
     
     // Generate token
@@ -41,9 +38,9 @@ exports.register = async (req, res) => {
         id: user._id,
         username: user.username,
         email: user.email,
-        avatar: user.avatar, // Include the correct avatar field
         petName: user.petName,
-        petAvatar: user.petAvatar // This will be the default from model or if set separately
+        avatar: user.avatar, // Return the main avatar
+        petAvatar: user.petAvatar // Keep returning petAvatar for now
       }
     });
   } catch (error) {
@@ -92,9 +89,9 @@ exports.login = async (req, res) => {
         id: user._id,
         username: user.username,
         email: user.email,
-        avatar: user.avatar, // Include the correct avatar field
         petName: user.petName,
-        petAvatar: user.petAvatar // This will be the default from model or if set separately
+        avatar: user.avatar, // Return the main avatar
+        petAvatar: user.petAvatar // Keep returning petAvatar
       }
     });
   } catch (error) {

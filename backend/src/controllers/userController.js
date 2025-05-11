@@ -75,7 +75,6 @@ exports.updateProfile = async (req, res) => {
     if (username) user.username = username;
     if (avatar) user.avatar = avatar;
     if (petName) user.petName = petName;
-    if (petAvatar) user.petAvatar = petAvatar;
     if (bio !== undefined) user.bio = bio;
     if (petToys !== undefined) user.petToys = Array.isArray(petToys) ? petToys : []; 
     
