@@ -52,6 +52,18 @@ const CommentModal = ({ isOpen, onClose, postId }) => {
     }
   };
 
+  // Utility function to get the correct avatar image URL for comments.
+  // Ensures avatars always load from the frontend's static assets (public/avatars),
+  // preventing 404 errors that occur if the backend domain is used.
+  const getAvatarUrl = (avatarPath) => {
+    // If no avatar is set, use the default avatar image
+    if (!avatarPath) return `${process.env.PUBLIC_URL}/avatars/avatar_1.png`;
+    // If the avatar path starts with '/', treat it as a static asset and prepend PUBLIC_URL
+    return avatarPath.startsWith('/')
+      ? process.env.PUBLIC_URL + avatarPath
+      : avatarPath; // Otherwise, use as-is (for external URLs)
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -66,7 +78,8 @@ const CommentModal = ({ isOpen, onClose, postId }) => {
             post.comments.map((comment) => (
               <div key={comment._id || comment.id} className="comment-item">
                 <img 
-                  src={comment.user?.avatar || `${process.env.PUBLIC_URL}/avatars/avatar_1.png`} // Prioritize user.avatar
+                  // Always use getAvatarUrl to ensure avatars load from the correct location
+                  src={getAvatarUrl(comment.user?.avatar)}
                   alt={comment.user?.username || 'User'} 
                   className="comment-avatar"
                 />
