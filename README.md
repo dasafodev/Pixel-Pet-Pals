@@ -1,6 +1,6 @@
 # 🐾 Pixel Pet Pals 🐾
 
-Ever wanted a pet that doesn't shed, never needs a walk at 3 AM, and fits right in your browser? Or maybe you just want to show off your *impeccable* taste in pixel art? Well, you've stumbled into the right corner of the internet!
+Hi!It's Marlon here! Ever wanted a pet that doesn't shed, never needs a walk at 3 AM, and fits right in your browser? Or maybe you just want to show off your *impeccable* taste in pixel art? Well, you've stumbled into the right corner of the internet!
 
 **Welcome to Pixel Pet Pals – where digital companionship meets a dash of retro charm!**
 
