@@ -33,7 +33,7 @@ const UserSchema = new mongoose.Schema({
   },
   petAvatar: {
     type: String,
-    default: '😺'
+    default: '/pets/pet_1.png' // Default pet avatar path
   },
   petToys: { // Added petToys field
     type: [String],

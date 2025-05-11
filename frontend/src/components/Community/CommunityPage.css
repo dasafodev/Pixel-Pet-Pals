@@ -76,6 +76,17 @@
   background-color: #fca5a5; /* A light red, for example */
 }
 
+.refresh-btn {
+  background-color: #f0e68c; /* Khaki - a neutral color */
+  /* Ensure padding and font-size are consistent if not already by .action-btn */
+  /* padding: 10px 15px; */ /* Already handled by .action-btn */
+  /* font-size: 12px; */    /* Already handled by .action-btn */
+}
+.refresh-btn svg { /* If the icon inside needs specific sizing */
+  width: 16px; /* Adjust as needed to fit button nicely */
+  height: 16px;
+}
+
 .feed-toolbar {
   display: flex;
   gap: 10px; /* Reduced gap between items in toolbar */

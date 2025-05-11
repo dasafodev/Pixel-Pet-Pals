@@ -21,7 +21,7 @@ const FallbackPostCard = ({ post }) => (
 );
 
 
-const UserPostsModal = ({ isOpen, onClose, userId, userName, userAvatar, PostCardComponent, ImageModalComponent }) => {
+const UserPostsModal = ({ isOpen, onClose, userId, userName, userAvatar, PostCardComponent, ImageModalComponent, onLikePostInModal, onOpenCommentsInModal, onDeletePostInModal }) => {
   const [userPosts, setUserPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -93,7 +93,15 @@ const UserPostsModal = ({ isOpen, onClose, userId, userName, userAvatar, PostCar
         <div className="user-posts-list" ref={listRef} onScroll={handleScroll}>
           {userPosts.length === 0 && !isLoading && <p className="empty-message">No posts found for this user.</p>}
           {userPosts.map(post => (
-            <ActualPostCard key={post._id || post.id} post={post} onImageClick={handleImageClick} />
+            <ActualPostCard 
+              key={post._id || post.id} 
+              post={post} 
+              onImageClick={handleImageClick}
+              onUserClick={() => {}} // Placeholder or pass down if needed for user profile clicks from modal
+              onLikePost={onLikePostInModal}
+              onOpenComments={onOpenCommentsInModal}
+              onDeletePost={onDeletePostInModal}
+            />
           ))}
           {isLoading && <p className="loading-message">Loading posts...</p>}
           {!isLoading && !hasMore && userPosts.length > 0 && <p className="end-message">No more posts.</p>}

@@ -3,8 +3,9 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './CommunityPage.css';
 import AddPostModal from './AddPostModal';
 import UserPostsModal from './UserPostsModal';
-import CommentModal from './CommentModal'; // Import CommentModal
-import { createPost, getAllPosts, toggleLikePost, addCommentToPost, getPostById } from '../../api'; // Added more API functions
+import CommentModal from './CommentModal';
+import ConfirmationModal from './ConfirmationModal'; // Import ConfirmationModal
+import { createPost, getAllPosts, toggleLikePost, addCommentToPost, getPostById, deletePost } from '../../api';
 
 // Import backgrounds and pet assets
 import bg1 from '../../assets/friends_bg/bg_1.png';
@@ -16,7 +17,7 @@ import bg5 from '../../assets/friends_bg/bg_5.png';
 // SVG Icons
 const LikeIcon = () => (
   <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24px" height="24px">
-    <path d="M9 2H5v2H3v2H1v6h2v2h2v2h2v2h2v2h2v2h2v-2h2v-2h2v-2h2v-2h2v-2h2V6h-2V4h-2V2h-4v2h-2v2h-2V4H9V2zm0 2v2h2v2h2V6h2V4h4v2h2v6h-2v2h-2v2h-2v2h-2v2h-2v-2H9v-2H7v-2H5v-2H3V6h2V4h4z"/>
+    <path d="M9 2H5v2H3v2H1v6h2v2h2v2h2v2h2v2h2v2h2v-2h2v-2h2v-2h2v-2h2V6h-2V4h-2V2h-4v2h-2v2h-2V4H9V2zm0 2v2h2v2h2V6h2V4h4v2h2v6h-2v2h-2v2h-2v2h-2v2h-2v-2H9v-2H7v-2H5v-2H3V6h2V4h4z"/>
   </svg>
 );
 
@@ -105,11 +106,26 @@ const ImageModal = ({ imageUrl, onClose }) => {
   );
 };
 
+// SVG Icons for Delete and Refresh
+const DeleteIcon = () => (
+  <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24px" height="24px">
+    <path d="M5 5h2v2H5V5zm4 4H7V7h2v2zm2 2H9V9h2v2zm2 0h-2v2H9v2H7v2H5v2h2v-2h2v-2h2v-2h2v2h2v2h2v2h2v-2h-2v-2h-2v-2h-2v-2zm2-2v2h-2V9h2zm2-2v2h-2V7h2zm0 0V5h2v2h-2z" fill="currentColor"/>
+  </svg>
+);
+
+const RefreshIcon = () => (
+  <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24px" height="24px">
+    <path d="M 12 2 C 6.4889971 2 2 6.4889971 2 12 C 2 17.511003 6.4889971 22 12 22 C 17.511003 22 22 17.511003 22 12 C 22 10.874352 21.745922 9.8043041 21.298828 8.8300781 L 19.857422 9.3496094 C 20.189974 10.160091 20.378906 11.051801 20.378906 12 C 20.378906 16.601029 16.601029 20.378906 12 20.378906 C 7.3989709 20.378906 3.6210938 16.601029 3.6210938 12 C 3.6210938 7.3989709 7.3989709 3.6210938 12 3.6210938 C 13.694936 3.6210938 15.219221 4.1600942 16.480469 5.0507812 L 16.480469 2 L 20.480469 5.5 L 16.480469 9 L 16.480469 6.2792969 C 15.422791 5.5539058 14.078773 5.1367188 12.619141 5.1367188 C 12.410041 5.1367187 12.203125 5.1518555 12 5.15625 C 8.2480146 5.15625 5.15625 8.2480146 5.15625 12 C 5.15625 12.198596 5.1701076 12.393203 5.1855469 12.583984 L 3.7050781 12.183594 C 3.6583405 11.280311 3.6210938 10.451018 3.6210938 9.7011719 L 5.53125 9.7011719 C 5.53125 10.735172 5.7611136 11.583984 5.7617188 11.583984 L 7.2304688 11.173828 C 7.1854001 10.300806 7.1484375 9.2734375 7.1484375 8.5195312 L 9.0625 8.5195312 C 9.0625 9.5415313 9.2837839 10.380859 9.2890625 10.380859 L 10.761719 9.9726562 C 10.714699 9.0896563 10.671875 8.25 10.671875 7.5839844 L 12.585938 7.5839844 C 12.585938 8.1069844 12.532101 8.7578125 12.53125 8.7578125 L 12.53125 8.7597656 C 12.53125 8.7597656 12.53125 8.7597656 12.53125 8.7597656 C 13.30625 8.7597656 14.125 9.0625 14.125 9.0625 L 15.232422 8.28125 C 14.619422 7.90125 13.71875 7.5839844 12.585938 7.5839844 L 12.585938 7.5820312 C 12.585938 7.5820312 12.585938 7.5820312 12.585938 7.5820312 C 11.514937 7.5820312 10.714844 8.0625 10.714844 8.0625 L 9.6152344 7.2753906 C 10.281234 6.7833906 11.289062 6.15625 12.619141 6.15625 C 14.078773 6.15625 15.422791 6.5734375 16.480469 7.2988281 L 16.480469 9 L 20.480469 5.5 L 16.480469 2 L 12 2 z"/>
+  </svg>
+);
+
 // PostCard Component
-const PostCard = ({ post, onImageClick, onUserClick, onLikePost, onOpenComments }) => { // Added onOpenComments
+const PostCard = ({ post, onImageClick, onUserClick, onLikePost, onOpenComments, onDeletePost }) => { // Added onDeletePost
   const imagesToDisplay = post.imageUrls ? post.imageUrls.slice(0, 9) : [];
   const user = post.user || {};
   const currentUserId = localStorage.getItem('userId');
+  // Ensure user and user._id exist and compare as strings
+  const isCurrentUserPost = user && user._id && String(user._id) === currentUserId;
 
   const handleUserClick = () => {
     if (user._id) {
@@ -129,7 +145,7 @@ const PostCard = ({ post, onImageClick, onUserClick, onLikePost, onOpenComments 
     }
   };
 
-  const isLikedByCurrentUser = post.likes && Array.isArray(post.likes) ? post.likes.some(like => (typeof like === 'string' ? like === currentUserId : like._id === currentUserId)) : false;
+  const isLikedByCurrentUser = post.likes && Array.isArray(post.likes) ? post.likes.some(likeId => String(likeId) === currentUserId) : false;
 
   return (
     <div className="post-card">
@@ -173,6 +189,11 @@ const PostCard = ({ post, onImageClick, onUserClick, onLikePost, onOpenComments 
             <button onClick={handleOpenComments} className="interaction-button">
               <CommentIcon /> <span>{post.comments ? post.comments.length : 0}</span>
             </button>
+            {isCurrentUserPost && onDeletePost && (
+              <button onClick={() => onDeletePost(post._id)} className="interaction-button delete-button">
+                <DeleteIcon />
+              </button>
+            )}
           </div>
           <div className="post-timestamp">{post.createdAt ? new Date(post.createdAt).toLocaleString() : 'Just now'}</div>
         </div>
@@ -182,7 +203,7 @@ const PostCard = ({ post, onImageClick, onUserClick, onLikePost, onOpenComments 
 };
 
 // CommunityFeedPanel Component
-const CommunityFeedPanel = ({ openAddPostModal, posts, isLoading, hasMorePosts, loadMorePosts, handleImageClick, handleUserClick, handleLikePostInFeed, handleOpenCommentsInFeed, handleSearchInputChange, searchTerm, handleSearchSubmit, handleClearSearch, isSearchActive }) => { // Added clear search and active status
+const CommunityFeedPanel = ({ openAddPostModal, posts, isLoading, hasMorePosts, loadMorePosts, handleImageClick, handleUserClick, handleLikePostInFeed, handleOpenCommentsInFeed, handleDeletePostInFeed, handleSearchInputChange, searchTerm, handleSearchSubmit, handleClearSearch, isSearchActive, onRefreshPosts }) => { // Added onRefreshPosts
   const postListRef = useRef(null);
 
    useEffect(() => {
@@ -214,6 +235,9 @@ const CommunityFeedPanel = ({ openAddPostModal, posts, isLoading, hasMorePosts, 
           <button className="action-btn clear-search-btn" onClick={handleClearSearch}>Clear</button>
         )}
         <button className="action-btn add-post-btn" onClick={openAddPostModal}>Post</button>
+        <button className="action-btn refresh-btn" onClick={onRefreshPosts} title="Refresh Posts">
+          <RefreshIcon />
+        </button>
       </div>
       <div className="post-list" ref={postListRef}>
         {posts.map((p) => (
@@ -223,7 +247,8 @@ const CommunityFeedPanel = ({ openAddPostModal, posts, isLoading, hasMorePosts, 
             onImageClick={handleImageClick} 
             onUserClick={handleUserClick}
             onLikePost={handleLikePostInFeed}
-            onOpenComments={handleOpenCommentsInFeed} // Pass comment modal handler
+            onOpenComments={handleOpenCommentsInFeed}
+            onDeletePost={handleDeletePostInFeed} // Pass delete handler
           />
         ))}
         {posts.length === 0 && !isLoading && <div className="empty-state">No posts yet. Be the first to post!</div>}
@@ -251,25 +276,27 @@ const CommunityPage = () => {
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
   const [commentModalPostId, setCommentModalPostId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [isSearchActive, setIsSearchActive] = useState(false); // To track if a search is currently applied
+  const [isSearchActive, setIsSearchActive] = useState(false); 
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [postIdToDelete, setPostIdToDelete] = useState(null);
 
-  const fetchPosts = useCallback(async (pageToFetch, termToSearch = '') => {
-    // If it's a new search (termToSearch is provided explicitly), reset page to 1
-    const actualPageToFetch = (termToSearch && termToSearch !== '' && pageToFetch !== 1) ? 1 : pageToFetch;
+  const fetchPosts = useCallback(async (pageToFetch, termToSearch = '', isRefresh = false) => {
+    // If it's a new search (termToSearch is provided explicitly) or a refresh, reset page to 1
+    const actualPageToFetch = (termToSearch && termToSearch !== '' && pageToFetch !== 1) || isRefresh ? 1 : pageToFetch;
     
-    if (isLoadingFeed && actualPageToFetch !== 1 && termToSearch === searchTerm) return; // Avoid refetch if loading more of same search
+    if (isLoadingFeed && actualPageToFetch !== 1 && termToSearch === searchTerm && !isRefresh) return; // Avoid refetch if loading more of same search unless it's a refresh
     setIsLoadingFeed(true);
     try {
       const data = await getAllPosts(actualPageToFetch, 10, termToSearch);
       
       if (data && data.posts) {
-        setPosts(prev => (actualPageToFetch === 1) ? data.posts : [...prev, ...data.posts]);
+        setPosts(prev => (actualPageToFetch === 1 || isRefresh) ? data.posts : [...prev, ...data.posts]);
         setHasMoreFeedPosts(data.currentPage < data.totalPages);
-        setCurrentPage(actualPageToFetch + 1);
+        setCurrentPage(actualPageToFetch + 1); // Always set current page based on what was fetched
         setIsSearchActive(!!termToSearch); // Set search active if term is present
       } else {
         setHasMoreFeedPosts(false);
-        if (actualPageToFetch === 1) setPosts([]);
+        if (actualPageToFetch === 1 || isRefresh) setPosts([]);
         setIsSearchActive(!!termToSearch);
       }
     } catch (error) {
@@ -282,9 +309,13 @@ const CommunityPage = () => {
 
   // Initial fetch
   useEffect(() => {
-    fetchPosts(1, ''); // Fetch all posts initially
+    fetchPosts(1, '', true); // Fetch all posts initially, isRefresh = true
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Run once on mount
+
+  const handleRefreshPosts = () => {
+    fetchPosts(1, searchTerm, true); // Refresh current view (search or all)
+  };
 
   const handleSearchInputChange = (e) => {
     setSearchTerm(e.target.value);
@@ -309,6 +340,26 @@ const CommunityPage = () => {
     } catch (error) {
       console.error("Error creating post:", error);
       alert(error.message || 'Failed to create post.');
+    }
+  };
+
+  const handleDeletePostInFeed = async (postId) => {
+    setPostIdToDelete(postId);
+    setIsConfirmModalOpen(true);
+  };
+
+  const confirmDeletePost = async () => {
+    if (postIdToDelete) {
+      try {
+        await deletePost(postIdToDelete);
+        setPosts(prevPosts => prevPosts.filter(p => p._id !== postIdToDelete));
+      } catch (error) {
+        console.error("Error deleting post:", error);
+        alert(error.message || "Failed to delete post.");
+      } finally {
+        setIsConfirmModalOpen(false);
+        setPostIdToDelete(null);
+      }
     }
   };
 
@@ -370,11 +421,13 @@ const CommunityPage = () => {
         handleUserClick={openUserPostsView}
         handleLikePostInFeed={handleLikePostInFeed}
         handleOpenCommentsInFeed={handleOpenCommentsInFeed}
+        handleDeletePostInFeed={handleDeletePostInFeed}
         handleSearchInputChange={handleSearchInputChange}
         searchTerm={searchTerm}
         handleSearchSubmit={handleSearchSubmit}
-        handleClearSearch={handleClearSearch} // Pass clear search handler
-        isSearchActive={isSearchActive} // Pass search active status
+        handleClearSearch={handleClearSearch}
+        isSearchActive={isSearchActive}
+        onRefreshPosts={handleRefreshPosts} // Pass refresh handler
       />
       <AddPostModal
         isOpen={isAddPostModalOpen}
@@ -392,15 +445,26 @@ const CommunityPage = () => {
         PostCardComponent={PostCard}
         ImageModalComponent={ImageModal}
         onLikePostInModal={handleLikePostInFeed} 
-        onOpenCommentsInModal={handleOpenCommentsInFeed} // Pass handler
+        onOpenCommentsInModal={handleOpenCommentsInFeed}
+        onDeletePostInModal={handleDeletePostInFeed} 
       />
-      {isCommentModalOpen && commentModalPostId && ( // Check commentModalPostId
+      {isCommentModalOpen && commentModalPostId && (
         <CommentModal
           isOpen={isCommentModalOpen}
           onClose={() => handleCloseCommentModal(commentModalPostId)}
           postId={commentModalPostId}
         />
       )}
+      <ConfirmationModal
+        isOpen={isConfirmModalOpen}
+        onClose={() => {
+          setIsConfirmModalOpen(false);
+          setPostIdToDelete(null);
+        }}
+        onConfirm={confirmDeletePost}
+        title="Delete Post"
+        message="Are you sure you want to delete this post? This action cannot be undone."
+      />
     </div>
   );
 };

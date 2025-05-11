@@ -147,11 +147,15 @@ function App() {
 
   const handleLogin = (userData, token) => {
     localStorage.setItem('token', token);
+    if (userData && userData.id) { // Use userData.id
+      localStorage.setItem('userId', userData.id);
+    }
     setUser(userData); // This will trigger the useEffect above to fetch friends
   };
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('userId'); // Also remove userId on logout
     setUser(null);
   };
 

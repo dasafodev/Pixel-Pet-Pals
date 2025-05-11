@@ -10,7 +10,7 @@ import defaultMaleAvatar from '../assets/homepage/male_3.png'; // Renamed for cl
 import mailboxIcon from '../assets/homepage/mailbox_2.png';
 
 const DEFAULT_AVATAR_PATH = '/avatars/avatar_1.png';
-const BACKGROUND_PATH = '/backgrounds/homepage_bg_2.PNG';
+const BACKGROUND_PATH = '/backgrounds/homepage_bg_2.png';
 
 const flameFrames = Array.from({ length: 9 }, (_, i) => `/backgrounds/flame/${i + 1}.png`);
 

@@ -1,0 +1,83 @@
+.confirmation-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050; /* Higher than other modals if necessary */
+  font-family: 'Press Start 2P', monospace;
+}
+
+.confirmation-modal-content {
+  background-color: #fefae0; /* Light cream background, common in the app */
+  padding: 25px;
+  border: 4px solid #000000;
+  box-shadow: 6px 6px 0px #000000;
+  text-align: center;
+  min-width: 300px;
+  max-width: 450px;
+}
+
+.confirmation-modal-title {
+  font-size: 16px;
+  color: #000000;
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+.confirmation-modal-message {
+  font-size: 12px;
+  color: #333333;
+  margin-bottom: 25px;
+  line-height: 1.6;
+}
+
+.confirmation-modal-actions {
+  display: flex;
+  justify-content: center; /* Center buttons */
+  gap: 20px; /* Space between buttons */
+}
+
+.confirmation-modal-actions button {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px;
+  padding: 10px 20px;
+  border: 3px solid #000000;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.confirmation-modal-actions .confirm-btn {
+  background-color: #e63946; /* Red for confirm/danger */
+  color: #ffffff;
+  box-shadow: 3px 3px 0px #000000;
+}
+
+.confirmation-modal-actions .confirm-btn:hover {
+  background-color: #d0313c;
+}
+
+.confirmation-modal-actions .confirm-btn:active {
+  box-shadow: inset 2px 2px 0px #000000;
+  transform: translate(1px, 1px);
+}
+
+.confirmation-modal-actions .cancel-btn {
+  background-color: #dddddd; /* Grey for cancel */
+  color: #000000;
+  box-shadow: 3px 3px 0px #000000;
+}
+
+.confirmation-modal-actions .cancel-btn:hover {
+  background-color: #cccccc;
+}
+
+.confirmation-modal-actions .cancel-btn:active {
+  box-shadow: inset 2px 2px 0px #000000;
+  transform: translate(1px, 1px);
+}
