@@ -1,8 +1,9 @@
 // FriendsList.js
-import React, { useState } from 'react'; 
+import React, { useState } from 'react';
 // import friendsData from './friendsData'; // Remove static data import
-import SearchFriendModal from './SearchFriendModal'; 
+import SearchFriendModal from './SearchFriendModal';
 import { useHistory } from 'react-router-dom';
+import { getAvatarUrl } from '../../utils/imageUtils'; // Import the utility function
 
 // Accept friends list, refresh function, and unread counts as props
 function FriendsList({ friends, refreshFriends, unreadCounts, onSelectFriend, onChatFriend }) { 
@@ -114,10 +115,10 @@ function FriendsList({ friends, refreshFriends, unreadCounts, onSelectFriend, on
                 onClick={() => handleSelectFriend(friend)}
               >
                 {/* Use avatar from API data, fallback to default */}
-                <img 
-                  src={friend.avatar ? `${process.env.PUBLIC_URL}${friend.avatar}` : `${process.env.PUBLIC_URL}/avatars/avatar_1.png`} 
+                <img
+                  src={getAvatarUrl(friend.avatar)} // Use the utility function
                   alt={`${friend.username}'s avatar`}
-                  style={{ 
+                  style={{
                     width: '40px', 
                     height: '40px', 
                     border: '2px solid #000', 
