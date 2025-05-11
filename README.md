@@ -52,7 +52,7 @@ Life’s too short for boring pets—and we’re obsessed with pixels. Inspired 
 
 ## What's Next? 🚀
 
-World domination? Probably not. But more features, smoother experiences, and maybe even more pixelated goodness are definitely on the horizon! (Unless the pixels go on strike).
+Maybe more features, smoother experiences, and maybe even more pixelated goodness are definitely on the horizon! (Unless the pixels go on strike).
 
 ---
 
