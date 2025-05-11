@@ -4,8 +4,8 @@ import './CommunityPage.css';
 import AddPostModal from './AddPostModal';
 import UserPostsModal from './UserPostsModal';
 import CommentModal from './CommentModal';
-import ConfirmationModal from './ConfirmationModal'; // Import ConfirmationModal
-import { createPost, getAllPosts, toggleLikePost, addCommentToPost, getPostById, deletePost } from '../../api';
+import ConfirmationModal from './ConfirmationModal';
+import { createPost, getAllPosts, toggleLikePost, addCommentToPost, getPostById, deletePost, DERIVED_BASE_URL } from '../../api'; // Import DERIVED_BASE_URL
 
 // Import backgrounds and pet assets
 import bg1 from '../../assets/friends_bg/bg_1.png';
@@ -168,7 +168,8 @@ const PostCard = ({ post, onImageClick, onUserClick, onLikePost, onOpenComments,
         {imagesToDisplay.length > 0 && (
           <div className={`post-images-container images-count-${imagesToDisplay.length}`}>
             {imagesToDisplay.map((url, idx) => {
-              const imageUrl = url.startsWith('http') || url.startsWith('blob:') ? url : `${process.env.REACT_APP_API_URL_BASE || 'http://localhost:5001'}${url}`;
+              const imageBaseUrl = DERIVED_BASE_URL || 'http://localhost:5001'; // Fallback for local if DERIVED_BASE_URL is somehow undefined
+              const imageUrl = url.startsWith('http') || url.startsWith('blob:') ? url : `${imageBaseUrl}${url}`;
               return (
                 <img
                   key={idx}
