@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { getUserPosts } from '../../api';
 import './UserPostsModal.css'; // We'll create this CSS file next
-import { getAvatarUrl } from '../../../utils/imageUtils'; // Import the utility function
+import { getAvatarUrl } from '../../utils/imageUtils'; // Corrected import path
 // Re-use PostCard and ImageModal from CommunityPage.js (or import if they were separate)
 
 // Assuming PostCard and ImageModal are defined in CommunityPage.js or accessible globally.
