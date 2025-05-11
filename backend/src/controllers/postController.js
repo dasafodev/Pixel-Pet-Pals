@@ -5,6 +5,64 @@ const path = require('path');
 // Note: Multer instance is now in middleware/upload.js, so it's not directly needed here
 // unless for specific error handling related to multer itself.
 
+// Helper function to transform image URLs to absolute paths
+const transformPostData = (postData, backendUrl) => {
+    if (!backendUrl) return postData; // Safety check
+
+    // Ensure postData is a plain object for modification
+    const transformedData = postData.toObject ? postData.toObject() : { ...postData };
+
+    // Transform post.imageUrls
+    if (transformedData.imageUrls && Array.isArray(transformedData.imageUrls)) {
+        transformedData.imageUrls = transformedData.imageUrls.map(url =>
+            url && !url.startsWith('http') ? `${backendUrl}${url}` : url
+        );
+    }
+
+    // Transform user avatar and petAvatar in post.user
+    if (transformedData.user) {
+        if (transformedData.user.avatar && !transformedData.user.avatar.startsWith('http')) {
+            transformedData.user.avatar = `${backendUrl}${transformedData.user.avatar}`;
+        }
+        if (transformedData.user.petAvatar && !transformedData.user.petAvatar.startsWith('http')) {
+            transformedData.user.petAvatar = `${backendUrl}${transformedData.user.petAvatar}`;
+        }
+    }
+
+    // Transform avatars in post.comments[].user
+    if (transformedData.comments && Array.isArray(transformedData.comments)) {
+        transformedData.comments = transformedData.comments.map(comment => {
+            if (comment.user) {
+                if (comment.user.avatar && !comment.user.avatar.startsWith('http')) {
+                    comment.user.avatar = `${backendUrl}${comment.user.avatar}`;
+                }
+                if (comment.user.petAvatar && !comment.user.petAvatar.startsWith('http')) {
+                    comment.user.petAvatar = `${backendUrl}${comment.user.petAvatar}`;
+                }
+            }
+            return comment;
+        });
+    }
+    
+    // Transform avatars in post.likes[] (if populated user objects)
+    if (transformedData.likes && Array.isArray(transformedData.likes)) {
+        transformedData.likes = transformedData.likes.map(like => {
+            // Check if 'like' is a populated user object
+            if (like && typeof like === 'object' && like._id) { 
+                if (like.avatar && !like.avatar.startsWith('http')) {
+                    like.avatar = `${backendUrl}${like.avatar}`;
+                }
+                if (like.petAvatar && !like.petAvatar.startsWith('http')) {
+                    like.petAvatar = `${backendUrl}${like.petAvatar}`;
+                }
+            }
+            return like;
+        });
+    }
+
+    return transformedData;
+};
+
 // Create a new post
 exports.createPost = async (req, res) => {
     try {
@@ -31,10 +89,13 @@ exports.createPost = async (req, res) => {
         await post.save();
         
         // Populate user details for the created post
-        const populatedPost = await Post.findById(post._id)
-            .populate('user', 'username avatar petAvatar') // Added petAvatar
-            .populate('comments.user', 'username avatar petAvatar'); // Added petAvatar
-        res.status(201).json(populatedPost);
+        let populatedPost = await Post.findById(post._id)
+            .populate('user', 'username avatar petAvatar') 
+            .populate('comments.user', 'username avatar petAvatar');
+        
+        // Transform image URLs before sending the response
+        const transformedPopulatedPost = transformPostData(populatedPost, process.env.BACKEND_URL);
+        res.status(201).json(transformedPopulatedPost);
 
     } catch (error) {
         // If post creation fails after image upload, attempt to delete uploaded files
@@ -76,13 +137,16 @@ exports.getAllPosts = async (req, res) => {
         // Get total documents for pagination
         const count = await Post.countDocuments(query);
 
+        const transformedPosts = posts.map(post => transformPostData(post, process.env.BACKEND_URL));
+
         res.status(200).json({
-            posts,
+            posts: transformedPosts,
             totalPages: Math.ceil(count / limit),
             currentPage: parseInt(page),
             totalPosts: count
         });
     } catch (error) {
+        console.error("Error in getAllPosts:", error); // Added console.error for better debugging
         res.status(500).json({ message: 'Error fetching posts', error: error.message });
     }
 };
@@ -100,8 +164,11 @@ exports.getUserPosts = async (req, res) => {
             // Send empty array if no posts, or handle as preferred
             return res.status(200).json([]); 
         }
-        res.status(200).json(posts);
+        
+        const transformedPosts = posts.map(post => transformPostData(post, process.env.BACKEND_URL));
+        res.status(200).json(transformedPosts);
     } catch (error) {
+        console.error("Error in getUserPosts:", error); // Added console.error
         res.status(500).json({ message: 'Error fetching user posts', error: error.message });
     }
 };
@@ -115,8 +182,10 @@ exports.getPostById = async (req, res) => {
         if (!post) {
             return res.status(404).json({ message: 'Post not found' });
         }
-        res.status(200).json(post);
+        const transformedPost = transformPostData(post, process.env.BACKEND_URL);
+        res.status(200).json(transformedPost);
     } catch (error) {
+        console.error("Error in getPostById:", error); // Added console.error
         res.status(500).json({ message: 'Error fetching post', error: error.message });
     }
 };
@@ -144,10 +213,12 @@ exports.updatePost = async (req, res) => {
 
         post.updatedAt = Date.now(); // Handled by timestamps: true in schema
         await post.save();
-        const populatedPost = await Post.findById(post._id)
-            .populate('user', 'username avatar petAvatar') // Added petAvatar
-            .populate('comments.user', 'username avatar petAvatar'); // Added petAvatar
-        res.status(200).json(populatedPost);
+        let populatedPost = await Post.findById(post._id)
+            .populate('user', 'username avatar petAvatar') 
+            .populate('comments.user', 'username avatar petAvatar');
+        
+        const transformedPopulatedPost = transformPostData(populatedPost, process.env.BACKEND_URL);
+        res.status(200).json(transformedPopulatedPost);
     } catch (error) {
         if (error.name === 'ValidationError') {
             return res.status(400).json({ message: error.message });
@@ -208,12 +279,15 @@ exports.toggleLikePost = async (req, res) => {
         }
 
         await post.save();
-        const populatedPost = await Post.findById(post._id)
-            .populate('user', 'username avatar petAvatar') // Added petAvatar
-            .populate('likes', 'username avatar petAvatar') // Populate users who liked & Added petAvatar
-            .populate('comments.user', 'username avatar petAvatar'); // Added petAvatar
-        res.status(200).json(populatedPost);
+        let populatedPost = await Post.findById(post._id)
+            .populate('user', 'username avatar petAvatar') 
+            .populate('likes', 'username avatar petAvatar') 
+            .populate('comments.user', 'username avatar petAvatar');
+            
+        const transformedPopulatedPost = transformPostData(populatedPost, process.env.BACKEND_URL);
+        res.status(200).json(transformedPopulatedPost);
     } catch (error) {
+        console.error("Error in toggleLikePost:", error); // Added console.error
         res.status(500).json({ message: 'Error toggling like on post', error: error.message });
     }
 };
@@ -247,12 +321,14 @@ exports.addCommentToPost = async (req, res) => {
                 path: 'comments',
                 populate: {
                     path: 'user',
-                    select: 'username avatar petAvatar' // Added petAvatar
+                    select: 'username avatar petAvatar' 
                 }
             });
-            
-        res.status(201).json(populatedPost);
+        
+        const transformedPopulatedPost = transformPostData(populatedPost, process.env.BACKEND_URL);
+        res.status(201).json(transformedPopulatedPost);
     } catch (error) {
+        console.error("Error in addCommentToPost:", error); // Added console.error
         res.status(500).json({ message: 'Error adding comment to post', error: error.message });
     }
 };
@@ -291,9 +367,11 @@ exports.deleteComment = async (req, res) => {
                     select: 'username avatar petAvatar' // Added petAvatar
                 }
             });
-
-        res.status(200).json(populatedPost);
+        
+        const transformedPopulatedPost = transformPostData(populatedPost, process.env.BACKEND_URL);
+        res.status(200).json(transformedPopulatedPost);
     } catch (error) {
+        console.error("Error in deleteComment:", error); // Added console.error
         res.status(500).json({ message: 'Error deleting comment', error: error.message });
     }
 };
