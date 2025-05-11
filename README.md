@@ -28,8 +28,8 @@ Pixel Pet Pals is more than just a bunch of cute pixels (though we have plenty o
     *   Send out friend requests like they're going out of style.
     *   Build your ultimate squad of pixel pet parents.
 
-*   **Engage in Top-Secret Pixel Patter (Chat!)** 💬
-    *   Whisper sweet nothings, important news, or just a string of emojis to your newfound friends. Our chat is *the* place for all your DMCs (Deep Meaningful Conversations... or Dumb Meme Chats).
+*   **Converse with our Resident AI!** 🤖💬
+    *   Got a burning question? Need some pixelated wisdom? Or just want to see if an AI can appreciate your pet's unique charm? Our AI chat is ready for your queries! (It's still learning, so be gentle!)
 
 *   **Hang Out at the Community Pub!** 🍻
     *   The digital water cooler for all Pixel Pet Pals.
