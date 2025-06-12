@@ -12,12 +12,12 @@ Hiii! It's Marlon here! Ever wanted a pet that doesn't shed, never needs a walk 
 
 ## So, What's the Big Deal? (Our Pawsome Features!) 🦴
 
-Pixel Pet Pals is more than just a bunch of cute pixels (though we have plenty of those!). It's a place to:
-<img width="295" alt="image" src="https://github.com/user-attachments/assets/54601afe-37ea-4389-acdf-6c52a36576e1" />
-<img width="520" alt="image" src="https://github.com/user-attachments/assets/0522fc16-dd66-4c6d-882b-d58185549155" />
-<img width="533" alt="image" src="https://github.com/user-attachments/assets/e4a67519-b36c-47c2-ac8c-ed1a3e352fe0" />
-<img width="429" alt="image" src="https://github.com/user-attachments/assets/5210b3f1-c2d5-4f90-91e8-7b5bc7be5c7b" />
-
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/54601afe-37ea-4389-acdf-6c52a36576e1" width="200" />
+  <img src="https://github.com/user-attachments/assets/0522fc16-dd66-4c6d-882b-d58185549155" width="200" />
+  <img src="https://github.com/user-attachments/assets/e4a67519-b36c-47c2-ac8c-ed1a3e352fe0" width="200" />
+  <img src="https://github.com/user-attachments/assets/5210b3f1-c2d5-4f90-91e8-7b5bc7be5c7b" width="200" />
+</p>
 
 *   **Adopt Your Very Own Pixel Pal!** 🐣
     *   Give your new best friend a snazzy name.
