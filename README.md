@@ -15,10 +15,11 @@ Hiii! It's Marlon here! Ever wanted a pet that doesn't shed, never needs a walk 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/54601afe-37ea-4389-acdf-6c52a36576e1" width="200" />
   <img src="https://github.com/user-attachments/assets/0522fc16-dd66-4c6d-882b-d58185549155" width="200" />
+</p>
+<p align="center">
   <img src="https://github.com/user-attachments/assets/e4a67519-b36c-47c2-ac8c-ed1a3e352fe0" width="200" />
   <img src="https://github.com/user-attachments/assets/5210b3f1-c2d5-4f90-91e8-7b5bc7be5c7b" width="200" />
 </p>
-
 *   **Adopt Your Very Own Pixel Pal!** 🐣
     *   Give your new best friend a snazzy name.
     *   Pick an avatar for them (which, plot twist, is also *your* avatar because sharing is caring, and frankly, it simplifies things for our devs... for now 😉).
