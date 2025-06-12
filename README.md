@@ -11,9 +11,9 @@ Hiii! It's Marlon here! Ever wanted a pet that doesn't shed, never needs a walk 
 ---
 
 ## So, What's the Big Deal? (Our Pawsome Features!) 🦴
+<img width="545" alt="image" src="https://github.com/user-attachments/assets/3b9c8c89-2b1b-45ce-8b17-b6862b972baa" />
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/54601afe-37ea-4389-acdf-6c52a36576e1" width="200" />
   <img src="https://github.com/user-attachments/assets/0522fc16-dd66-4c6d-882b-d58185549155" width="200" />
 </p>
 <p align="center">
