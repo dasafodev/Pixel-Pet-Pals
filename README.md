@@ -55,9 +55,10 @@ Hiii! It's Marlon here! Ever wanted a pet that doesn't shed, never needs a walk 
 ## Why Pixel Pet Pals? 🤔
 
 Life’s too short for boring pets—and we’re obsessed with pixels. Inspired by my own kitten and daydreams of strolling through Central Park together, Pixel Pet Pals brings that joy straight to your browser. Adopt and raise an AI-powered pixel cat, wander a cozy pixel park, bump into friends’ pets and chat in real time—your digital companion is always by your side.
+<p>
 <img width="400" alt="image" src="https://github.com/user-attachments/assets/d1064726-93ba-456f-9a9b-5d5296c8b5e6" />
 <img width="600" alt="image" src="https://github.com/user-attachments/assets/123c0d2b-be58-45ab-ac4d-bd3c6f4b4daf" />
-
+</p>
 
 ## Built With 🛠️ 
 
