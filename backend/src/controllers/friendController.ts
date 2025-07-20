@@ -1,10 +1,27 @@
-const User = require('../models/User');
-const FriendRequest = require('../models/FriendRequest');
+import type { Request, Response } from 'express';
+import type { Types } from 'mongoose';
+import type { IApiResponse, IFriendRequestDocument } from '@/types/common.js';
+import User from '../models/User.js';
+import FriendRequest from '../models/FriendRequest.js';
+
+interface FriendRequestResponse extends IApiResponse {
+  friendRequest?: IFriendRequestDocument;
+}
+
+interface FriendRequestListResponse extends IApiResponse {
+  count?: number;
+  friendRequests?: IFriendRequestDocument[];
+}
+
+interface FriendsListResponse extends IApiResponse {
+  count?: number;
+  friends?: any[];
+}
 
 // @desc    Send friend request
 // @route   POST /api/friends/request/:id
 // @access  Private
-exports.sendFriendRequest = async (req, res) => {
+export const sendFriendRequest = async (req: Request<{ id: string }>, res: Response<FriendRequestResponse>): Promise<void> => {
   try {
     const { id } = req.params;
 
@@ -12,51 +29,55 @@ exports.sendFriendRequest = async (req, res) => {
     const recipient = await User.findById(id);
 
     if (!recipient) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         message: 'User not found',
       });
+      return;
     }
 
     // Check if user is trying to add themselves
-    if (req.user.id === id) {
-      return res.status(400).json({
+    if (req.user!.id === id) {
+      res.status(400).json({
         success: false,
         message: 'You cannot add yourself as a friend',
       });
+      return;
     }
 
     // Check if friend request already exists
     const existingRequest = await FriendRequest.findOne({
       $or: [
-        { sender: req.user.id, recipient: id },
-        { sender: id, recipient: req.user.id },
+        { sender: req.user!.id, recipient: id },
+        { sender: id, recipient: req.user!.id },
       ],
     });
 
     if (existingRequest) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         message: 'Friend request already exists',
       });
+      return;
     }
 
     // Check if they are already friends
-    if (req.user.friends.includes(id)) {
-      return res.status(400).json({
+    if ((req.user as any).friends.includes(id)) {
+      res.status(400).json({
         success: false,
         message: 'You are already friends with this user',
       });
+      return;
     }
 
     // Create friend request
     const friendRequest = await FriendRequest.create({
-      sender: req.user.id,
+      sender: req.user!.id,
       recipient: id,
     });
 
     // Add to recipient's friend requests
-    recipient.friendRequests.push(req.user.id);
+    recipient.friendRequests.push(req.user!.id as any);
     await recipient.save();
 
     res.status(201).json({
@@ -67,30 +88,31 @@ exports.sendFriendRequest = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Server error',
-      error: error.message,
+      error: (error as Error).message,
     });
   }
 };
 
 // @desc    Accept friend request
-// @route   PUT /api/friends/accept/:id
+// @route   PUT /api/friends/accept/:requestId
 // @access  Private
-exports.acceptFriendRequest = async (req, res) => {
+export const acceptFriendRequest = async (req: Request<{ requestId: string }>, res: Response<IApiResponse>): Promise<void> => {
   try {
-    const { requestId } = req.params; // Use requestId from route parameter
+    const { requestId } = req.params;
 
     // Find the friend request by its ID and ensure the current user is the recipient
     const friendRequest = await FriendRequest.findOne({
       _id: requestId,
-      recipient: req.user.id,
+      recipient: req.user!.id,
       status: 'pending',
     });
 
     if (!friendRequest) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         message: 'Friend request not found',
       });
+      return;
     }
 
     // Update friend request status
@@ -98,37 +120,35 @@ exports.acceptFriendRequest = async (req, res) => {
     await friendRequest.save();
 
     // Add each user to the other's friends list
-    const sender = await User.findById(friendRequest.sender); // Get sender from the request document
-    const recipient = await User.findById(req.user.id);
+    const sender = await User.findById(friendRequest.sender);
+    const recipient = await User.findById(req.user!.id);
 
     // Ensure users exist before modifying
     if (!sender || !recipient) {
-      return res.status(404).json({ success: false, message: 'Sender or recipient not found' });
+      res.status(404).json({ success: false, message: 'Sender or recipient not found' });
+      return;
     }
 
     // Add friends if not already added (idempotency)
-    if (!sender.friends.includes(req.user.id)) {
-      sender.friends.push(req.user.id);
+    if (!sender.friends.includes(req.user!.id as any)) {
+      sender.friends.push(req.user!.id as any);
     }
-    if (!recipient.friends.includes(friendRequest.sender)) {
-      recipient.friends.push(friendRequest.sender);
+    if (!recipient.friends.includes(friendRequest.sender as any)) {
+      recipient.friends.push(friendRequest.sender as any);
     }
 
-    // Remove sender ID from recipient's friendRequests array (if present)
-    // Note: The FriendRequest document itself is marked 'accepted',
-    // but some implementations might store pending sender IDs directly on the User model.
-    // This line assumes recipient.friendRequests stores sender IDs. Adjust if needed.
+    // Remove sender ID from recipient's friendRequests array
     recipient.friendRequests = recipient.friendRequests.filter(
-      requestSenderId => requestSenderId.toString() !== friendRequest.sender.toString()
+      requestSenderId => (requestSenderId as Types.ObjectId).toString() !== (friendRequest.sender as Types.ObjectId).toString()
     );
 
     await sender.save();
     await recipient.save();
 
-    // Socket.IO: 通知双方刷新好友列表
+    // Socket.IO: Notify both parties to refresh friends list
     if (req.io) {
-      req.io.to(sender._id.toString()).emit('friend-accepted');
-      req.io.to(recipient._id.toString()).emit('friend-accepted');
+      req.io.to((sender._id as Types.ObjectId).toString()).emit('friend-accepted');
+      req.io.to((recipient._id as Types.ObjectId).toString()).emit('friend-accepted');
     }
 
     res.status(200).json({
@@ -139,41 +159,42 @@ exports.acceptFriendRequest = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Server error',
-      error: error.message,
+      error: (error as Error).message,
     });
   }
 };
 
 // @desc    Reject friend request
-// @route   PUT /api/friends/reject/:id
+// @route   PUT /api/friends/reject/:requestId
 // @access  Private
-exports.rejectFriendRequest = async (req, res) => {
+export const rejectFriendRequest = async (req: Request<{ requestId: string }>, res: Response<IApiResponse>): Promise<void> => {
   try {
-    const { requestId } = req.params; // Use requestId from route parameter
+    const { requestId } = req.params;
 
     // Find the friend request by its ID and ensure the current user is the recipient
     const friendRequest = await FriendRequest.findOne({
       _id: requestId,
-      recipient: req.user.id,
+      recipient: req.user!.id,
       status: 'pending',
     });
 
     if (!friendRequest) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         message: 'Friend request not found',
       });
+      return;
     }
 
     // Update friend request status
     friendRequest.status = 'rejected';
     await friendRequest.save();
 
-    // Remove sender ID from recipient's friendRequests array (if present)
-    const recipient = await User.findById(req.user.id);
+    // Remove sender ID from recipient's friendRequests array
+    const recipient = await User.findById(req.user!.id);
     if (recipient) {
       recipient.friendRequests = recipient.friendRequests.filter(
-        requestSenderId => requestSenderId.toString() !== friendRequest.sender.toString()
+        requestSenderId => (requestSenderId as Types.ObjectId).toString() !== (friendRequest.sender as Types.ObjectId).toString()
       );
       await recipient.save();
     }
@@ -186,7 +207,7 @@ exports.rejectFriendRequest = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Server error',
-      error: error.message,
+      error: (error as Error).message,
     });
   }
 };
@@ -194,11 +215,11 @@ exports.rejectFriendRequest = async (req, res) => {
 // @desc    Get friend requests
 // @route   GET /api/friends/requests
 // @access  Private
-exports.getFriendRequests = async (req, res) => {
+export const getFriendRequests = async (req: Request, res: Response<FriendRequestListResponse>): Promise<void> => {
   try {
     // Get pending friend requests
     const friendRequests = await FriendRequest.find({
-      recipient: req.user.id,
+      recipient: req.user!.id,
       status: 'pending',
     }).populate('sender', 'username petName petAvatar');
 
@@ -211,7 +232,7 @@ exports.getFriendRequests = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Server error',
-      error: error.message,
+      error: (error as Error).message,
     });
   }
 };
@@ -219,24 +240,24 @@ exports.getFriendRequests = async (req, res) => {
 // @desc    Get friends
 // @route   GET /api/friends
 // @access  Private
-exports.getFriends = async (req, res) => {
+export const getFriends = async (req: Request, res: Response<FriendsListResponse>): Promise<void> => {
   try {
     // Get user with populated friends
-    const user = await User.findById(req.user.id).populate(
+    const user = await User.findById(req.user!.id).populate(
       'friends',
       'username avatar petName bio'
     );
 
     res.status(200).json({
       success: true,
-      count: user.friends.length,
-      friends: user.friends,
+      count: user!.friends.length,
+      friends: user!.friends,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
       message: 'Server error',
-      error: error.message,
+      error: (error as Error).message,
     });
   }
 };
@@ -244,35 +265,35 @@ exports.getFriends = async (req, res) => {
 // @desc    Remove friend
 // @route   DELETE /api/friends/:id
 // @access  Private
-exports.removeFriend = async (req, res) => {
+export const removeFriend = async (req: Request<{ id: string }>, res: Response<IApiResponse>): Promise<void> => {
   try {
     const { id } = req.params;
 
     // Check if they are friends
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user!.id);
 
-    if (!user.friends.includes(id)) {
-      return res.status(400).json({
+    if (!user!.friends.includes(id as any)) {
+      res.status(400).json({
         success: false,
         message: 'You are not friends with this user',
       });
+      return;
     }
 
     // Remove from each other's friends list
     const friend = await User.findById(id);
 
-    user.friends = user.friends.filter(friendId => friendId.toString() !== id);
+    user!.friends = user!.friends.filter(friendId => (friendId as Types.ObjectId).toString() !== id);
+    friend!.friends = friend!.friends.filter(friendId => (friendId as Types.ObjectId).toString() !== req.user!.id);
 
-    friend.friends = friend.friends.filter(friendId => friendId.toString() !== req.user.id);
-
-    await user.save();
-    await friend.save();
+    await user!.save();
+    await friend!.save();
 
     // Delete any friend requests
     await FriendRequest.deleteMany({
       $or: [
-        { sender: req.user.id, recipient: id },
-        { sender: id, recipient: req.user.id },
+        { sender: req.user!.id, recipient: id },
+        { sender: id, recipient: req.user!.id },
       ],
     });
 
@@ -284,7 +305,7 @@ exports.removeFriend = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Server error',
-      error: error.message,
+      error: (error as Error).message,
     });
   }
 };

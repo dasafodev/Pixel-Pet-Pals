@@ -23,15 +23,17 @@ const io = socketIo(server, {
   cors: {
     origin: process.env.CLIENT_URL || 'http://localhost:3000',
     methods: ['GET', 'POST'],
-    credentials: true
-  }
+    credentials: true,
+  },
 });
 
 // Middleware
-app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:3000', // Use environment variable
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL || 'http://localhost:3000', // Use environment variable
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 // Serve static files from the 'public' directory (for uploads)
@@ -45,23 +47,24 @@ app.use((req, res, next) => {
 });
 
 // Database connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/pet-social', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-.then(() => console.log('Connected to MongoDB'))
-.catch(err => console.error('MongoDB connection error:', err));
+mongoose
+  .connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/pet-social', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log('Connected to MongoDB'))
+  .catch(err => console.error('MongoDB connection error:', err));
 
 // Socket.io connection
-io.on('connection', (socket) => {
+io.on('connection', socket => {
   console.log('New client connected:', socket.id);
-  
+
   // Join a room (for private messaging)
-  socket.on('join', (userId) => {
+  socket.on('join', userId => {
     socket.join(userId);
     console.log(`User ${userId} joined their room`);
   });
-  
+
   // Handle private messages
   socket.on('private-message', ({ sender, recipient, content }) => {
     // Store message in database
@@ -69,28 +72,30 @@ io.on('connection', (socket) => {
     Message.create({
       sender,
       recipient,
-      content
-    }).then(message => {
-      // Emit to recipient
-      io.to(recipient).emit('private-message', message);
-      // Emit back to sender for confirmation
-      io.to(sender).emit('private-message', message);
-    }).catch(error => {
-      console.error('Error saving message:', error);
-      io.to(sender).emit('error', { message: 'Failed to send message' });
-    });
+      content,
+    })
+      .then(message => {
+        // Emit to recipient
+        io.to(recipient).emit('private-message', message);
+        // Emit back to sender for confirmation
+        io.to(sender).emit('private-message', message);
+      })
+      .catch(error => {
+        console.error('Error saving message:', error);
+        io.to(sender).emit('error', { message: 'Failed to send message' });
+      });
   });
-  
+
   // Handle typing indicators
   socket.on('typing', ({ sender, recipient }) => {
     io.to(recipient).emit('typing', { sender });
   });
-  
+
   // Handle stop typing indicators
   socket.on('stop-typing', ({ sender, recipient }) => {
     io.to(recipient).emit('stop-typing', { sender });
   });
-  
+
   // Handle disconnection
   socket.on('disconnect', () => {
     console.log('Client disconnected:', socket.id);

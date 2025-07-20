@@ -1,12 +1,12 @@
-const express = require('express');
-const {
+import express from 'express';
+import {
   sendMessage,
   getMessages,
   getUnreadCount,
   getConversations,
   deleteMessage,
-} = require('../controllers/messageController');
-const { protect } = require('../middleware/auth');
+} from '../controllers/messageController.js';
+import { protect } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -28,4 +28,4 @@ router.get('/:id', getMessages);
 // Delete message
 router.delete('/:id', deleteMessage);
 
-module.exports = router;
+export default router;

@@ -1,12 +1,71 @@
-const Post = require('../models/Post');
-const User = require('../models/User'); // To populate user details
-const fs = require('fs');
-const path = require('path');
-// Note: Multer instance is now in middleware/upload.js, so it's not directly needed here
-// unless for specific error handling related to multer itself.
+import type { Request, Response } from 'express';
+import { Types } from 'mongoose';
+import type { IApiResponse, AuthenticatedUser } from '@/types/common.js';
+import Post from '../models/Post.js';
+import User from '../models/User.js';
+import fs from 'fs';
+import path from 'path';
+
+interface CreatePostRequest {
+  content?: string;
+}
+
+interface UpdatePostRequest {
+  content?: string;
+}
+
+interface AddCommentRequest {
+  text: string;
+}
+
+interface GetAllPostsQuery {
+  page?: string;
+  limit?: string;
+  search?: string;
+}
+
+interface PostUser {
+  _id: string;
+  username: string;
+  avatar: string;
+  petAvatar: string;
+}
+
+interface Comment {
+  _id: string;
+  user: PostUser;
+  text: string;
+  createdAt: Date;
+}
+
+interface PostResponse {
+  _id: string;
+  user: PostUser;
+  content: string;
+  imageUrls: string[];
+  likes: (string | PostUser)[];
+  comments: Comment[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface GetAllPostsResponse {
+  posts: PostResponse[];
+  totalPages: number;
+  currentPage: number;
+  totalPosts: number;
+}
+
+interface ErrorResponse {
+  success?: false;
+  message: string;
+  error?: string;
+}
+
+// Remove custom Request interface - use standard Express Request type
 
 // Helper function to transform image URLs to absolute paths
-const transformPostData = (postData, backendUrl) => {
+const transformPostData = (postData: any, backendUrl?: string): PostResponse => {
   if (!backendUrl) return postData; // Safety check
 
   // Ensure postData is a plain object for modification
@@ -14,7 +73,7 @@ const transformPostData = (postData, backendUrl) => {
 
   // Transform post.imageUrls
   if (transformedData.imageUrls && Array.isArray(transformedData.imageUrls)) {
-    transformedData.imageUrls = transformedData.imageUrls.map(url =>
+    transformedData.imageUrls = transformedData.imageUrls.map((url: string) =>
       url && !url.startsWith('http') ? `${backendUrl}${url}` : url
     );
   }
@@ -31,7 +90,7 @@ const transformPostData = (postData, backendUrl) => {
 
   // Transform avatars in post.comments[].user
   if (transformedData.comments && Array.isArray(transformedData.comments)) {
-    transformedData.comments = transformedData.comments.map(comment => {
+    transformedData.comments = transformedData.comments.map((comment: any) => {
       if (comment.user) {
         if (comment.user.avatar && !comment.user.avatar.startsWith('http')) {
           comment.user.avatar = `${backendUrl}${comment.user.avatar}`;
@@ -46,7 +105,7 @@ const transformPostData = (postData, backendUrl) => {
 
   // Transform avatars in post.likes[] (if populated user objects)
   if (transformedData.likes && Array.isArray(transformedData.likes)) {
-    transformedData.likes = transformedData.likes.map(like => {
+    transformedData.likes = transformedData.likes.map((like: any) => {
       // Check if 'like' is a populated user object
       if (like && typeof like === 'object' && like._id) {
         if (like.avatar && !like.avatar.startsWith('http')) {
@@ -64,24 +123,30 @@ const transformPostData = (postData, backendUrl) => {
 };
 
 // Create a new post
-exports.createPost = async (req, res) => {
+export const createPost = async (
+  req: Request<{}, PostResponse | ErrorResponse, CreatePostRequest>,
+  res: Response<PostResponse | ErrorResponse>
+): Promise<void> => {
   try {
     const { content } = req.body;
-    if (!content && (!req.files || req.files.length === 0)) {
+    const files = req.files as Express.Multer.File[] | undefined;
+
+    if (!content && (!files || files.length === 0)) {
       // Content or images must be present
-      return res.status(400).json({ message: 'Post content or images cannot be empty.' });
+      res.status(400).json({ message: 'Post content or images cannot be empty.' });
+      return;
     }
 
-    const imageUrls = [];
-    if (req.files && req.files.length > 0) {
-      req.files.forEach(file => {
+    const imageUrls: string[] = [];
+    if (files && files.length > 0) {
+      files.forEach((file: Express.Multer.File) => {
         // Construct the URL path for each image
         imageUrls.push(`/uploads/posts/${file.filename}`);
       });
     }
 
     const newPostData = {
-      user: req.user.id, // Assuming req.user is populated by auth middleware
+      user: req.user!.id, // Assuming req.user is populated by auth middleware
       content: content || '', // Allow empty content if images are present
       imageUrls: imageUrls,
     };
@@ -90,17 +155,23 @@ exports.createPost = async (req, res) => {
     await post.save();
 
     // Populate user details for the created post
-    let populatedPost = await Post.findById(post._id)
+    const populatedPost = await Post.findById(post._id)
       .populate('user', 'username avatar petAvatar')
       .populate('comments.user', 'username avatar petAvatar');
+
+    if (!populatedPost) {
+      res.status(500).json({ message: 'Error creating post' });
+      return;
+    }
 
     // Transform image URLs before sending the response
     const transformedPopulatedPost = transformPostData(populatedPost, process.env.BACKEND_URL);
     res.status(201).json(transformedPopulatedPost);
   } catch (error) {
     // If post creation fails after image upload, attempt to delete uploaded files
-    if (req.files && req.files.length > 0) {
-      req.files.forEach(file => {
+    const files = req.files as Express.Multer.File[] | undefined;
+    if (files && files.length > 0) {
+      files.forEach((file: Express.Multer.File) => {
         const filePath = path.join(
           __dirname,
           '..',
@@ -116,18 +187,22 @@ exports.createPost = async (req, res) => {
       });
     }
     // Handle Mongoose validation errors (e.g., too many images)
-    if (error.name === 'ValidationError') {
-      return res.status(400).json({ message: error.message });
+    if (error instanceof Error && error.name === 'ValidationError') {
+      res.status(400).json({ message: error.message });
+      return;
     }
-    res.status(500).json({ message: 'Error creating post', error: error.message });
+    res.status(500).json({ message: 'Error creating post', error: (error as Error).message });
   }
 };
 
 // Get all posts (with pagination and search)
-exports.getAllPosts = async (req, res) => {
+export const getAllPosts = async (
+  req: Request<{}, GetAllPostsResponse | ErrorResponse, {}, GetAllPostsQuery>,
+  res: Response<GetAllPostsResponse | ErrorResponse>
+): Promise<void> => {
   try {
-    const { page = 1, limit = 10, search } = req.query;
-    const query = {};
+    const { page = '1', limit = '10', search } = req.query;
+    const query: any = {};
 
     if (search) {
       // Add search condition for post content (case-insensitive)
@@ -138,8 +213,8 @@ exports.getAllPosts = async (req, res) => {
       .populate('user', 'username avatar petAvatar')
       .populate('comments.user', 'username avatar petAvatar')
       .sort({ createdAt: -1 })
-      .limit(limit * 1) // Convert limit to number
-      .skip((page - 1) * limit) // Convert page to number
+      .limit(Number(limit)) // Convert limit to number
+      .skip((Number(page) - 1) * Number(limit)) // Convert page to number
       .exec();
 
     // Get total documents for pagination
@@ -149,18 +224,23 @@ exports.getAllPosts = async (req, res) => {
 
     res.status(200).json({
       posts: transformedPosts,
-      totalPages: Math.ceil(count / limit),
+      totalPages: Math.ceil(count / Number(limit)),
       currentPage: parseInt(page),
       totalPosts: count,
     });
   } catch (error) {
     console.error('Error in getAllPosts:', error); // Added console.error for better debugging
-    res.status(500).json({ message: 'Error fetching posts', error: error.message });
+    res.status(500).json({ message: 'Error fetching posts', error: (error as Error).message });
   }
 };
 
 // Get all posts by a specific user
-exports.getUserPosts = async (req, res) => {
+export const getUserPosts = async (
+  req: Request<{
+    userId: string;
+  }>,
+  res: Response<PostResponse[] | ErrorResponse>
+): Promise<void> => {
   try {
     const userId = req.params.userId;
     const posts = await Post.find({ user: userId })
@@ -170,47 +250,65 @@ exports.getUserPosts = async (req, res) => {
 
     if (!posts) {
       // Send empty array if no posts, or handle as preferred
-      return res.status(200).json([]);
+      res.status(200).json([]);
+      return;
     }
 
     const transformedPosts = posts.map(post => transformPostData(post, process.env.BACKEND_URL));
     res.status(200).json(transformedPosts);
   } catch (error) {
     console.error('Error in getUserPosts:', error); // Added console.error
-    res.status(500).json({ message: 'Error fetching user posts', error: error.message });
+    res.status(500).json({ message: 'Error fetching user posts', error: (error as Error).message });
   }
 };
 
 // Get a single post by ID
-exports.getPostById = async (req, res) => {
+export const getPostById = async (
+  req: Request<{
+    postId: string;
+  }>,
+  res: Response<PostResponse | ErrorResponse>
+): Promise<void> => {
   try {
     const post = await Post.findById(req.params.postId)
       .populate('user', 'username avatar petAvatar') // Added petAvatar
       .populate('comments.user', 'username avatar petAvatar'); // Added petAvatar
     if (!post) {
-      return res.status(404).json({ message: 'Post not found' });
+      res.status(404).json({ message: 'Post not found' });
+      return;
     }
     const transformedPost = transformPostData(post, process.env.BACKEND_URL);
     res.status(200).json(transformedPost);
   } catch (error) {
     console.error('Error in getPostById:', error); // Added console.error
-    res.status(500).json({ message: 'Error fetching post', error: error.message });
+    res.status(500).json({ message: 'Error fetching post', error: (error as Error).message });
   }
 };
 
 // Update a post
-exports.updatePost = async (req, res) => {
+export const updatePost = async (
+  req: Request<
+    {
+      postId: string;
+    },
+    PostResponse | ErrorResponse,
+    UpdatePostRequest
+  >,
+  res: Response<PostResponse | ErrorResponse>
+): Promise<void> => {
   try {
     const { content } = req.body;
     const post = await Post.findById(req.params.postId);
 
     if (!post) {
-      return res.status(404).json({ message: 'Post not found' });
+      res.status(404).json({ message: 'Post not found' });
+      return;
     }
 
     // Check if the logged-in user is the author of the post
-    if (post.user.toString() !== req.user.id) {
-      return res.status(403).json({ message: 'User not authorized to update this post' });
+    if (post.user.toString() !== req.user!.id) {
+      res.status(403).json({ message: 'User not authorized to update this post' });
+      return;
     }
 
     if (content) post.content = content;
@@ -219,33 +317,47 @@ exports.updatePost = async (req, res) => {
     // A more complex implementation would involve checking for new req.files,
     // deleting old images from post.imageUrls, and adding new ones.
 
-    post.updatedAt = Date.now(); // Handled by timestamps: true in schema
+    post.updatedAt = new Date(); // Handled by timestamps: true in schema
     await post.save();
-    let populatedPost = await Post.findById(post._id)
+    const populatedPost = await Post.findById(post._id)
       .populate('user', 'username avatar petAvatar')
       .populate('comments.user', 'username avatar petAvatar');
+
+    if (!populatedPost) {
+      res.status(500).json({ message: 'Error updating post' });
+      return;
+    }
 
     const transformedPopulatedPost = transformPostData(populatedPost, process.env.BACKEND_URL);
     res.status(200).json(transformedPopulatedPost);
   } catch (error) {
-    if (error.name === 'ValidationError') {
-      return res.status(400).json({ message: error.message });
+    if (error instanceof Error && error.name === 'ValidationError') {
+      res.status(400).json({ message: error.message });
+      return;
     }
-    res.status(500).json({ message: 'Error updating post', error: error.message });
+    res.status(500).json({ message: 'Error updating post', error: (error as Error).message });
   }
 };
 
 // Delete a post
-exports.deletePost = async (req, res) => {
+export const deletePost = async (
+  req: Request<{ postId: string }>,
+  res: Response<{
+    message: string;
+    error?: string;
+  }>
+): Promise<void> => {
   try {
     const post = await Post.findById(req.params.postId);
 
     if (!post) {
-      return res.status(404).json({ message: 'Post not found' });
+      res.status(404).json({ message: 'Post not found' });
+      return;
     }
 
-    if (post.user.toString() !== req.user.id) {
-      return res.status(403).json({ message: 'User not authorized to delete this post' });
+    if (post.user.toString() !== req.user!.id) {
+      res.status(403).json({ message: 'User not authorized to delete this post' });
+      return;
     }
 
     // If post has images, delete them from the server
@@ -263,59 +375,86 @@ exports.deletePost = async (req, res) => {
     await post.deleteOne();
     res.status(200).json({ message: 'Post deleted successfully' });
   } catch (error) {
-    res.status(500).json({ message: 'Error deleting post', error: error.message });
+    res.status(500).json({ message: 'Error deleting post', error: (error as Error).message });
   }
 };
 
 // Like/Unlike a post
-exports.toggleLikePost = async (req, res) => {
+export const toggleLikePost = async (
+  req: Request<{
+    postId: string;
+  }>,
+  res: Response<PostResponse | ErrorResponse>
+): Promise<void> => {
   try {
     const post = await Post.findById(req.params.postId);
     if (!post) {
-      return res.status(404).json({ message: 'Post not found' });
+      res.status(404).json({ message: 'Post not found' });
+      return;
     }
 
-    const userId = req.user.id;
-    const likeIndex = post.likes.findIndex(likeId => likeId.toString() === userId);
+    const userId = req.user!.id;
+    const likeIndex = post.likes.findIndex(
+      (likeId: Types.ObjectId) => likeId.toString() === userId
+    );
 
     if (likeIndex > -1) {
       // User has already liked, so unlike
       post.likes.splice(likeIndex, 1);
     } else {
       // User has not liked, so like
-      post.likes.push(userId);
+      post.likes.push(new Types.ObjectId(userId));
     }
 
     await post.save();
-    let populatedPost = await Post.findById(post._id)
+    const populatedPost = await Post.findById(post._id)
       .populate('user', 'username avatar petAvatar')
       .populate('likes', 'username avatar petAvatar')
       .populate('comments.user', 'username avatar petAvatar');
+
+    if (!populatedPost) {
+      res.status(500).json({ message: 'Error updating post like' });
+      return;
+    }
 
     const transformedPopulatedPost = transformPostData(populatedPost, process.env.BACKEND_URL);
     res.status(200).json(transformedPopulatedPost);
   } catch (error) {
     console.error('Error in toggleLikePost:', error); // Added console.error
-    res.status(500).json({ message: 'Error toggling like on post', error: error.message });
+    res
+      .status(500)
+      .json({ message: 'Error toggling like on post', error: (error as Error).message });
   }
 };
 
 // Add a comment to a post
-exports.addCommentToPost = async (req, res) => {
+export const addCommentToPost = async (
+  req: Request<
+    {
+      postId: string;
+    },
+    PostResponse | ErrorResponse,
+    AddCommentRequest
+  >,
+  res: Response<PostResponse | ErrorResponse>
+): Promise<void> => {
   try {
     const { text } = req.body;
     if (!text) {
-      return res.status(400).json({ message: 'Comment text cannot be empty.' });
+      res.status(400).json({ message: 'Comment text cannot be empty.' });
+      return;
     }
 
     const post = await Post.findById(req.params.postId);
     if (!post) {
-      return res.status(404).json({ message: 'Post not found' });
+      res.status(404).json({ message: 'Post not found' });
+      return;
     }
 
     const newComment = {
-      user: req.user.id,
+      user: new Types.ObjectId(req.user!.id),
       text: text,
+      createdAt: new Date(),
     };
 
     post.comments.push(newComment);
@@ -333,36 +472,52 @@ exports.addCommentToPost = async (req, res) => {
         },
       });
 
+    if (!populatedPost) {
+      res.status(500).json({ message: 'Error adding comment' });
+      return;
+    }
+
     const transformedPopulatedPost = transformPostData(populatedPost, process.env.BACKEND_URL);
     res.status(201).json(transformedPopulatedPost);
   } catch (error) {
     console.error('Error in addCommentToPost:', error); // Added console.error
-    res.status(500).json({ message: 'Error adding comment to post', error: error.message });
+    res
+      .status(500)
+      .json({ message: 'Error adding comment to post', error: (error as Error).message });
   }
 };
 
 // Delete a comment from a post
-exports.deleteComment = async (req, res) => {
+export const deleteComment = async (
+  req: Request<{
+    postId: string;
+    commentId: string;
+  }>,
+  res: Response<PostResponse | ErrorResponse>
+): Promise<void> => {
   try {
     const { postId, commentId } = req.params;
     const post = await Post.findById(postId);
 
     if (!post) {
-      return res.status(404).json({ message: 'Post not found' });
+      res.status(404).json({ message: 'Post not found' });
+      return;
     }
 
-    const comment = post.comments.id(commentId);
-    if (!comment) {
-      return res.status(404).json({ message: 'Comment not found' });
+    const commentDoc = post.comments.find(c => c._id?.toString() === commentId);
+    if (!commentDoc) {
+      res.status(404).json({ message: 'Comment not found' });
+      return;
     }
 
     // Check if the logged-in user is the author of the comment or the author of the post
-    if (comment.user.toString() !== req.user.id && post.user.toString() !== req.user.id) {
-      return res.status(403).json({ message: 'User not authorized to delete this comment' });
+    if (commentDoc.user.toString() !== req.user!.id && post.user.toString() !== req.user!.id) {
+      res.status(403).json({ message: 'User not authorized to delete this comment' });
+      return;
     }
 
-    // Mongoose subdocument removal
-    comment.deleteOne(); // or post.comments.pull(commentId) and then post.save()
+    // Remove comment by filtering
+    post.comments = post.comments.filter(c => c._id?.toString() !== commentId);
     await post.save();
 
     const populatedPost = await Post.findById(post._id)
@@ -376,10 +531,15 @@ exports.deleteComment = async (req, res) => {
         },
       });
 
+    if (!populatedPost) {
+      res.status(500).json({ message: 'Error deleting comment' });
+      return;
+    }
+
     const transformedPopulatedPost = transformPostData(populatedPost, process.env.BACKEND_URL);
     res.status(200).json(transformedPopulatedPost);
   } catch (error) {
     console.error('Error in deleteComment:', error); // Added console.error
-    res.status(500).json({ message: 'Error deleting comment', error: error.message });
+    res.status(500).json({ message: 'Error deleting comment', error: (error as Error).message });
   }
 };

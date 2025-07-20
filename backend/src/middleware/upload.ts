@@ -1,6 +1,7 @@
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
+import type { Request } from 'express';
 
 // Define the storage directory for post images
 const postImageDir = path.join(__dirname, '..', '..', 'public', 'uploads', 'posts');
@@ -12,17 +13,21 @@ if (!fs.existsSync(postImageDir)) {
 
 // Set up storage engine for multer
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
+  destination: function (req: Request, file: Express.Multer.File, cb: (error: Error | null, destination: string) => void) {
     cb(null, postImageDir);
   },
-  filename: function (req, file, cb) {
+  filename: function (req: Request, file: Express.Multer.File, cb: (error: Error | null, filename: string) => void) {
     // Create a unique filename: fieldname-timestamp.extension
     cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
   },
 });
 
 // File filter to accept only images
-const fileFilter = (req, file, cb) => {
+const fileFilter = (
+  req: Request,
+  file: Express.Multer.File,
+  cb: multer.FileFilterCallback
+): void => {
   // Allowed ext
   const filetypes = /jpeg|jpg|png|gif/;
   // Check ext
@@ -31,9 +36,9 @@ const fileFilter = (req, file, cb) => {
   const mimetype = filetypes.test(file.mimetype);
 
   if (mimetype && extname) {
-    return cb(null, true);
+    cb(null, true);
   } else {
-    cb('Error: Images Only!');
+    cb(new Error('Error: Images Only!'));
   }
 };
 
@@ -44,4 +49,4 @@ const uploadPostImages = multer({
   fileFilter: fileFilter,
 }).array('images', 9); // 'images' is the field name, 9 is the max count
 
-module.exports = uploadPostImages;
+export default uploadPostImages;

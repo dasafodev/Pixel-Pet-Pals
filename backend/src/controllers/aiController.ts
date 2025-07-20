@@ -1,15 +1,39 @@
-const Groq = require('groq-sdk');
+import type { Request, Response } from 'express';
+import type { IApiResponse } from '@/types/common.js';
+import Groq from 'groq-sdk';
+
+interface ChatRequest {
+  message: string;
+  history?: Array<{
+    role: 'user' | 'assistant';
+    content: string;
+  }>;
+}
+
+interface ChatResponse {
+  response: string;
+}
+
+interface ErrorResponse {
+  error: string;
+}
+
+interface GroqMessage {
+  role: 'system' | 'user' | 'assistant';
+  content: string;
+}
 
 // Configure Groq client using API key from environment variables
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
-exports.handleChat = async (req, res) => {
+export const handleChat = async (req: Request<{}, ChatResponse | ErrorResponse, ChatRequest>, res: Response<ChatResponse | ErrorResponse>): Promise<void> => {
   const { message, history } = req.body; // Expecting the user's message and potentially conversation history
 
   if (!message) {
-    return res.status(400).json({ error: 'Message is required' });
+    res.status(400).json({ error: 'Message is required' });
+    return;
   }
 
   try {
@@ -20,7 +44,7 @@ exports.handleChat = async (req, res) => {
     // Groq expects history to be an array of {role: 'user'/'assistant', content: '...'}
     // We'll keep it simple for now and just send the current user message.
     // You can expand this to include `history` if needed.
-    const messagesForApi = [
+    const messagesForApi: GroqMessage[] = [
       {
         role: 'system',
         content: 'You are a helpful assistant integrated into a chat application.',
