@@ -1,6 +1,5 @@
-import { Schema, model, type Model } from 'mongoose';
-import type { Document, Types } from 'mongoose';
-import * as bcrypt from 'bcryptjs';
+import { model, type Model, Schema } from 'mongoose';
+import bcrypt from 'bcryptjs';
 import type { IUserDocument } from '@/types/common.js';
 
 // User model interface
