@@ -1,13 +1,13 @@
-const express = require('express');
-const { 
+import express from 'express';
+import {
   sendFriendRequest,
   acceptFriendRequest,
   rejectFriendRequest,
   getFriendRequests,
   getFriends,
-  removeFriend
-} = require('../controllers/friendController');
-const { protect } = require('../middleware/auth');
+  removeFriend,
+} from '../controllers/friendController.js';
+import { protect } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -32,4 +32,4 @@ router.put('/reject/:requestId', rejectFriendRequest);
 // Remove friend
 router.delete('/:id', removeFriend);
 
-module.exports = router;
+export default router;

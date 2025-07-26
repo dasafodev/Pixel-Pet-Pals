@@ -1,7 +1,8 @@
-const express = require('express');
+import express from 'express';
+import * as eventController from '../controllers/eventController.js';
+import { protect } from '../middleware/auth.js';
+
 const router = express.Router();
-const eventController = require('../controllers/eventController');
-const { protect } = require('../middleware/auth');
 
 // @route   GET api/events/locations/predefined
 // @desc    Get predefined locations for events
@@ -38,4 +39,4 @@ router.delete('/:eventId', protect, eventController.deleteEvent);
 // @access  Private
 router.post('/:eventId/participate', protect, eventController.toggleEventParticipation);
 
-module.exports = router;
+export default router;

@@ -1,24 +1,29 @@
-const express = require('express');
+import express from 'express';
+import type { Request, Response, NextFunction } from 'express';
+import multer from 'multer';
+import * as postController from '../controllers/postController.js';
+import { protect } from '../middleware/auth.js';
+import uploadPostImages from '../middleware/upload.js';
+
 const router = express.Router();
-const multer = require('multer'); // Import multer
-const postController = require('../controllers/postController');
-const { protect } = require('../middleware/auth'); // Import the protect middleware
-const uploadPostImages = require('../middleware/upload'); // Import the new multer middleware
 
 // @route   POST api/posts
 // @desc    Create a new post
 // @access  Private
-const handleUploadErrors = (req, res, next) => {
-  uploadPostImages(req, res, function (err) {
+const handleUploadErrors = (req: Request, res: Response, next: NextFunction): void => {
+  uploadPostImages(req, res, (err: any) => {
     if (err instanceof multer.MulterError) {
       // A Multer error occurred when uploading.
       if (err.code === 'LIMIT_UNEXPECTED_FILE') {
-        return res.status(400).json({ message: 'Too many files. Maximum is 9 images.' });
+        res.status(400).json({ message: 'Too many files. Maximum is 9 images.' });
+        return;
       }
-      return res.status(400).json({ message: err.message });
+      res.status(400).json({ message: err.message });
+      return;
     } else if (err) {
       // An unknown error occurred when uploading.
-      return res.status(400).json({ message: err }); // err from fileFilter is a string
+      res.status(400).json({ message: err }); // err from fileFilter is a string
+      return;
     }
     // Everything went fine.
     next();
@@ -67,4 +72,4 @@ router.post('/:postId/comments', protect, postController.addCommentToPost);
 // @access  Private
 router.delete('/:postId/comments/:commentId', protect, postController.deleteComment);
 
-module.exports = router;
+export default router;
