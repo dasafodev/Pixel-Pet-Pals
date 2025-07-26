@@ -1,5 +1,4 @@
 import type { Request, Response } from 'express';
-import type { IApiResponse } from '@/types/common.js';
 import Groq from 'groq-sdk';
 
 interface ChatRequest {
@@ -23,12 +22,15 @@ interface GroqMessage {
   content: string;
 }
 
-// Configure Groq client using API key from environment variables
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
-});
+export const handleChat = async (
+  req: Request<{}, ChatResponse | ErrorResponse, ChatRequest>,
+  res: Response<ChatResponse | ErrorResponse>
+): Promise<void> => {
+  // Configure Groq client using API key from environment variables
+  const groq = new Groq({
+    apiKey: process.env.GROQ_API_KEY,
+  });
 
-export const handleChat = async (req: Request<{}, ChatResponse | ErrorResponse, ChatRequest>, res: Response<ChatResponse | ErrorResponse>): Promise<void> => {
   const { message, history } = req.body; // Expecting the user's message and potentially conversation history
 
   if (!message) {

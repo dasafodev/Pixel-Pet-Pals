@@ -39,9 +39,9 @@
     "**/*.test.js"
   ],
   "ts-node": {
-    "esm": false,
+    "esm": true,
     "compilerOptions": {
-      "module": "CommonJS",
+      "module": "ESNext",
       "baseUrl": ".",
       "paths": {
         "@/*": [

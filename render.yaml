@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: pixel-pet-pals-backend
+    runtime: node
+    plan: starter
+    buildCommand: cd backend && npm install && npm run build
+    startCommand: cd backend && npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5001
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CLIENT_URL
+        value: https://pixel-pet-pals-frontend.onrender.com
+      - key: GROQ_API_KEY
+        sync: false
