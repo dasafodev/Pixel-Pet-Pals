@@ -115,6 +115,16 @@ src/
 - `DELETE /api/users/friends/:friendId` - Remover amigo
 - `GET /api/users/stats` - Obtener estadísticas del usuario
 
+- ### Posts
+- `GET /api/posts` - Obtener todas las publicaciones
+- `GET /api/posts/:postId` - Obtener publicación por ID
+- `GET /api/posts/user/:userId` - Obtener todas las publicaciones de un usuario
+- `PUT /api/posts/:postId` - Actualizar una publicación
+- `DELETE /api/posts/:postId` - Remover una publicación
+- `POST /api/posts/:postId/like` - Dar me gusta o no me gusta a una publicación
+- `POST /api/posts/:postId/comments` - Agregar comentario a una publicación
+- `DELETE /api/posts/:postId/comments/:commentId` - Eliminar un comentario de una publicación
+
 ## Migración Gradual
 
 La arquitectura permite una migración gradual:
@@ -140,9 +150,8 @@ npm run dev
 
 ## Próximos Pasos
 
-1. **Migración de Posts**: Aplicar la misma arquitectura a la funcionalidad de posts
-2. **Testing**: Implementar tests unitarios para cada capa
-3. **Documentación API**: Generar documentación automática con Swagger
-4. **Validación**: Implementar validación automática con Joi o Zod
-5. **Logging**: Agregar sistema de logging estructurado
-6. **Error Handling**: Implementar manejo centralizado de errores 
+1. **Testing**: Implementar tests unitarios para cada capa
+2. **Documentación API**: Generar documentación automática con Swagger
+3. **Validación**: Implementar validación automática con Joi o Zod
+4. **Logging**: Agregar sistema de logging estructurado
+5. **Error Handling**: Implementar manejo centralizado de errores 
