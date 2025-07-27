@@ -1,6 +1,6 @@
 import { Schema, model, type Model } from 'mongoose';
 import type { Document, Types } from 'mongoose';
-import type { IPostDocument, ICommentDocument } from '@/types/common.js';
+import type { IPostDocument, ICommentDocument } from '../types/common';
 
 // Post model interface
 interface IPostModel extends Model<IPostDocument> {}

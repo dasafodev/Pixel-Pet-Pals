@@ -1,7 +1,7 @@
 import express from 'express';
 import type { Request, Response, NextFunction } from 'express';
 import multer from 'multer';
-import * as postController from '../controllers/postController.js';
+import * as postController from '../controllers/ts/PostController.js';
 import { protect } from '../middleware/auth.js';
 import uploadPostImages from '../middleware/upload.js';
 

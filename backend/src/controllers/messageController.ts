@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { Types } from 'mongoose';
-import type { IApiResponse, IMessageDocument } from '@/types/common.js';
+import type { IApiResponse, IMessageDocument } from '../types/common';
 import Message from '../models/Message.js';
 import User from '../models/User.js';
 

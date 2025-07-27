@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import type { Types } from 'mongoose';
-import type { IAuthResponse, IApiResponse } from '@/types/common.js';
+import type { IAuthResponse, IApiResponse } from '../types/common';
 import User from '../models/User.js';
 import { generateToken } from '../middleware/auth.js';
 

@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { UserController } from '@/controllers/ts/UserController.js';
-import { protect } from '@/middleware/auth.js';
+import { UserController } from '../../controllers/ts/UserController.js';
+import { protect } from '../../middleware/auth.js';
 
 export class UserRoutes {
   private readonly router: Router;
