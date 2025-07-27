@@ -26,22 +26,13 @@
     "typeRoots": [
       "./node_modules/@types",
       "./src/types"
-    ],
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"],
-      "@/types": ["src/types/index"]
-    }
+    ]
   },
   "include": [
-    "src/**/*",
-    "src/**/*.ts",
-    "src/**/*.js"
+    "src/**/*"
   ],
   "exclude": [
     "node_modules",
-    "dist",
-    "**/*.test.ts",
-    "**/*.test.js"
+    "dist"
   ]
-} 
+}
