@@ -9,8 +9,8 @@ Esta modernización introduce una arquitectura de capas bien definida para el ba
 ### 1. Presentation Layer (Capa de Presentación)
 **Ubicación:** `src/controllers/ts/` y `src/routes/ts/`
 
-- **UserController.ts**: Maneja requests HTTP y se comunica con la capa de servicios
-- **UserRoutes.ts**: Define endpoints REST modernizados
+- **UserController.ts / PostController.ts**: Maneja requests HTTP y se comunican con la capa de servicios
+- **UserRoutes.ts / PostRoutes.ts**: Definen endpoints REST modernizados
 - **Responsabilidades:**
   - Validación de requests
   - Transformación de datos de entrada/salida
@@ -21,6 +21,7 @@ Esta modernización introduce una arquitectura de capas bien definida para el ba
 **Ubicación:** `src/services/`
 
 - **UserService.ts**: Contiene las reglas de negocio para gestión de usuarios
+- **PostService.ts**: Contiene las reglas de negocio para gestión de publicaciones
 - **Responsabilidades:**
   - Validaciones complejas
   - Orquestación de operaciones
@@ -31,6 +32,7 @@ Esta modernización introduce una arquitectura de capas bien definida para el ba
 **Ubicación:** `src/repositories/`
 
 - **UserRepository.ts**: Operaciones de persistencia para usuarios
+- **PostRepository.ts**: Operaciones de persistencia para publicaciones
 - **Responsabilidades:**
   - Queries optimizadas
   - Operaciones CRUD
@@ -40,7 +42,7 @@ Esta modernización introduce una arquitectura de capas bien definida para el ba
 ### 4. Data Transfer Objects (DTOs)
 **Ubicación:** `src/dto/`
 
-- **UserDto.ts**: Define estructura de datos para requests/responses
+- **UserDto.ts / PostDto.ts**: Define estructura de datos para requests/responses
 - **Responsabilidades:**
   - Validación automática de datos
   - Especificación de formato de datos
@@ -50,6 +52,7 @@ Esta modernización introduce una arquitectura de capas bien definida para el ba
 **Ubicación:** `src/types/`
 
 - **User.ts**: Interfaces TypeScript para el modelo de usuario
+- **Post.ts**: Interfaces TypeScript para el modelo de publicaciones
 - **express.d.ts**: Extensiones de tipos para Express
 
 ## Beneficios de la Modernización
