@@ -107,6 +107,18 @@ export interface IApiResponse<T = any> {
   error?: string;
 }
 
+// Alias para compatibilidad con tu rama users
+export type ApiResponse<T = any> = IApiResponse<T>;
+
+// Paginación (puedes usar este tipo para ambos casos)
+export interface PaginatedResponse<T> extends IApiResponse<T[]> {
+  count: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+// User Response Types
 export interface IUserResponse {
   id: string;
   username: string;
@@ -117,6 +129,7 @@ export interface IUserResponse {
   bio?: string;
 }
 
+// Auth Response
 export interface IAuthResponse extends IApiResponse {
   token?: string;
   user?: IUserResponse;
@@ -140,9 +153,17 @@ export interface IApiValidationError extends IApiError {
   errors: IValidationError[];
 }
 
-// Request/Response Extensions (will be moved to express.d.ts)
+// Authenticated User (un solo tipo, extendido si lo necesitas)
 export interface AuthenticatedUser {
   id: string;
   username: string;
   email: string;
+  avatar?: string;
+  petName?: string;
+  petAvatar?: string;
+  bio?: string;
+  friends?: string[];
+  friendRequests?: string[];
+  createdAt?: Date;
+  updatedAt?: Date;
 }

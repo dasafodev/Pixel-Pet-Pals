@@ -1,13 +1,15 @@
 // Express type extensions for Pixel Pet Pals
 
 import { Server as SocketIOServer } from 'socket.io';
-import { AuthenticatedUser } from './common.js';
+import { AuthenticatedUser } from './common';
 
 declare global {
   namespace Express {
     interface Request {
       user?: AuthenticatedUser;
       io?: SocketIOServer;
+      file?: MulterFile;
+      files?: MulterFile[] | { [fieldname: string]: MulterFile[] } | undefined;
     }
   }
 }
@@ -24,11 +26,4 @@ export interface MulterFile {
   path: string;
 }
 
-declare global {
-  namespace Express {
-    interface Request {
-      file?: MulterFile;
-      files?: MulterFile[] | { [fieldname: string]: MulterFile[] } | undefined;
-    }
-  }
-}
+export {};
