@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { Types } from 'mongoose';
-import type { IApiResponse, AuthenticatedUser } from '@/types/common.js';
+import type { IApiResponse, AuthenticatedUser } from '../types/common';
 import Post from '../models/Post.js';
 import User from '../models/User.js';
 import fs from 'fs';

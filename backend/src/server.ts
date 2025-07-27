@@ -17,11 +17,13 @@ import postRoutes from './routes/posts.js';
 import eventRoutes from './routes/events.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
+
+// ESM-compatible __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 import Message from './models/Message.js';
 
 // Get __dirname equivalent in ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 // Socket.IO event interfaces
 interface PrivateMessageData {

@@ -1,6 +1,6 @@
 import { model, type Model, Schema } from 'mongoose';
 import bcrypt from 'bcryptjs';
-import type { IUserDocument } from '@/types/common.js';
+import type { IUserDocument } from '../types/common';
 
 // User model interface
 interface IUserModel extends Model<IUserDocument> {}

@@ -7,25 +7,27 @@ export class UserRepository {
    * Find all users except the specified user
    */
   async findAllExcept(userId: string): Promise<IUser[]> {
-    return await User.find({ _id: { $ne: userId } })
+    return (await User.find({ _id: { $ne: userId } })
       .select('-password')
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean()) as unknown as IUser[];
   }
 
   /**
    * Find user by ID with populated friends
    */
   async findByIdWithFriends(userId: string): Promise<IUser | null> {
-    return await User.findById(userId)
+    return (await User.findById(userId)
       .select('-password')
-      .populate('friends', 'username petName petAvatar');
+      .populate('friends', 'username petName petAvatar')
+      .lean()) as unknown as IUser | null;
   }
 
   /**
    * Find user by ID without password
    */
   async findById(userId: string): Promise<IUser | null> {
-    return await User.findById(userId).select('-password');
+    return (await User.findById(userId).select('-password').lean()) as unknown as IUser | null;
   }
 
   /**
@@ -67,11 +69,12 @@ export class UserRepository {
       ]
     };
 
-    return await User.find(searchQuery)
+    return (await User.find(searchQuery)
       .select('-password -friends -friendRequests -email')
       .limit(limit)
       .skip(skip)
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean()) as unknown as IUserSearchResult[];
   }
 
   /**
@@ -79,7 +82,7 @@ export class UserRepository {
    */
   async create(userData: Partial<IUser>): Promise<IUser> {
     const user = new User(userData);
-    return await user.save();
+    return (await user.save()) as unknown as IUser;
   }
 
   /**

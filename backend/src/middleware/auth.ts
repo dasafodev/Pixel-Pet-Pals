@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import type { Request, Response, NextFunction } from 'express';
-import type { IJWTPayload } from '@/types/common.js';
+import type { IJWTPayload } from '../types/common';
 import type { Types } from 'mongoose';
 import User from '../models/User.js';
 

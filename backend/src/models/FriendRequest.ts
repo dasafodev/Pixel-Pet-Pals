@@ -1,5 +1,5 @@
 import { model, type Model, Schema } from 'mongoose';
-import type { IFriendRequestDocument } from '@/types/common.js';
+import type { IFriendRequestDocument } from '../types/common';
 
 // FriendRequest model interface
 interface IFriendRequestModel extends Model<IFriendRequestDocument> {}

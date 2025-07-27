@@ -41,6 +41,15 @@ export class UserController {
   async getUserById(req: Request, res: Response): Promise<void> {
     try {
       const userId = req.params.id;
+      
+      if (!userId) {
+        res.status(400).json({
+          success: false,
+          message: 'User ID is required'
+        });
+        return;
+      }
+      
       const user = await this.userService.getUserById(userId);
 
       if (!user) {
@@ -174,6 +183,22 @@ export class UserController {
       const currentUserId = (req as any).user.id;
       const friendId = req.params.friendId;
 
+      if (!currentUserId) {
+        res.status(401).json({
+          success: false,
+          message: 'User not authenticated'
+        });
+        return;
+      }
+
+      if (!friendId) {
+        res.status(400).json({
+          success: false,
+          message: 'Friend ID is required'
+        });
+        return;
+      }
+
       const updatedUser = await this.userService.addFriend(currentUserId, friendId);
 
       res.status(200).json({
@@ -216,6 +241,22 @@ export class UserController {
     try {
       const currentUserId = (req as any).user.id;
       const friendId = req.params.friendId;
+
+      if (!currentUserId) {
+        res.status(401).json({
+          success: false,
+          message: 'User not authenticated'
+        });
+        return;
+      }
+
+      if (!friendId) {
+        res.status(400).json({
+          success: false,
+          message: 'Friend ID is required'
+        });
+        return;
+      }
 
       const updatedUser = await this.userService.removeFriend(currentUserId, friendId);
 
