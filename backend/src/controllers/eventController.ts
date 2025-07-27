@@ -1,8 +1,6 @@
-import type {Request, Response} from 'express';
-import {Types} from 'mongoose';
-import type {IApiResponse, IEventDocument, AuthenticatedUser} from '../types/common';
+import type { Request, Response } from 'express';
+import { Types } from 'mongoose';
 import Event from '../models/Event.js';
-import User from '../models/User.js';
 
 interface PredefinedLocation {
   name: string;
@@ -108,16 +106,24 @@ const predefinedLocations: PredefinedLocation[] = [
 ];
 
 // Get predefined locations
-export const getPredefinedLocations = async (req: Request<{}, PredefinedLocation[] | ErrorResponse, {}>, res: Response<PredefinedLocation[] | ErrorResponse>): Promise<void> => {
+export const getPredefinedLocations = async (
+  req: Request<{}, PredefinedLocation[] | ErrorResponse, {}>,
+  res: Response<PredefinedLocation[] | ErrorResponse>
+): Promise<void> => {
   try {
     res.status(200).json(predefinedLocations);
   } catch (error) {
-    res.status(500).json({message: 'Error fetching predefined locations', error: (error as Error).message});
+    res
+      .status(500)
+      .json({ message: 'Error fetching predefined locations', error: (error as Error).message });
   }
 };
 
 // Create a new event
-export const createEvent = async (req: Request<{}, EventResponse, CreateEventRequest>, res: Response<EventResponse | ErrorResponse>): Promise<void> => {
+export const createEvent = async (
+  req: Request<{}, EventResponse, CreateEventRequest>,
+  res: Response<EventResponse | ErrorResponse>
+): Promise<void> => {
   try {
     const {
       title,
@@ -155,12 +161,14 @@ export const createEvent = async (req: Request<{}, EventResponse, CreateEventReq
           address: chosenLocation.address,
           latitude: chosenLocation.latitude,
           longitude: chosenLocation.longitude,
-          isPredefined: chosenLocation.isPredefined
+          isPredefined: chosenLocation.isPredefined,
         }; // Use all details from predefined
       } else if (!latitude || !longitude) {
         // If isPredefined is true but not found in our list, and no coords provided, it's an issue
         // Or, allow custom 'predefined-like' entries if coords are given
-        res.status(400).json({message: 'Selected predefined location not found or missing coordinates.'});
+        res
+          .status(400)
+          .json({ message: 'Selected predefined location not found or missing coordinates.' });
         return;
       }
     } else if (!isPredefined && (!latitude || !longitude)) {
@@ -183,60 +191,76 @@ export const createEvent = async (req: Request<{}, EventResponse, CreateEventReq
       .populate('participants', 'username avatar');
 
     if (!populatedEvent) {
-      res.status(500).json({message: 'Error creating event'});
+      res.status(500).json({ message: 'Error creating event' });
       return;
     }
 
     res.status(201).json(populatedEvent as unknown as EventResponse);
   } catch (error) {
-    res.status(500).json({message: 'Error creating event', error: (error as Error).message});
+    res.status(500).json({ message: 'Error creating event', error: (error as Error).message });
   }
 };
 
 // Get all events
-export const getAllEvents = async (req: Request<{}, EventResponse[] | ErrorResponse, {}>, res: Response<EventResponse[] | ErrorResponse>): Promise<void> => {
+export const getAllEvents = async (
+  req: Request<{}, EventResponse[] | ErrorResponse, {}>,
+  res: Response<EventResponse[] | ErrorResponse>
+): Promise<void> => {
   try {
     const events = await Event.find()
       .populate('creator', 'username avatar')
       .populate('participants', 'username avatar')
-      .sort({startTime: 1}); // Sort by upcoming first
+      .sort({ startTime: 1 }); // Sort by upcoming first
     res.status(200).json(events as unknown as EventResponse[]);
   } catch (error) {
-    res.status(500).json({message: 'Error fetching events', error: (error as Error).message});
+    res.status(500).json({ message: 'Error fetching events', error: (error as Error).message });
   }
 };
 
 // Get a single event by ID
-export const getEventById = async (req: Request<{
-  eventId: string
-}, EventResponse>, res: Response<EventResponse | ErrorResponse>): Promise<void> => {
+export const getEventById = async (
+  req: Request<
+    {
+      eventId: string;
+    },
+    EventResponse
+  >,
+  res: Response<EventResponse | ErrorResponse>
+): Promise<void> => {
   try {
     const event = await Event.findById(req.params.eventId)
       .populate('creator', 'username avatar')
       .populate('participants', 'username avatar');
     if (!event) {
-      res.status(404).json({message: 'Event not found'});
+      res.status(404).json({ message: 'Event not found' });
       return;
     }
     res.status(200).json(event as unknown as EventResponse);
   } catch (error) {
-    res.status(500).json({message: 'Error fetching event', error: (error as Error).message});
+    res.status(500).json({ message: 'Error fetching event', error: (error as Error).message });
   }
 };
 
 // Update an event
-export const updateEvent = async (req: Request<{
-  eventId: string
-}, EventResponse, UpdateEventRequest>, res: Response<EventResponse | ErrorResponse>): Promise<void> => {
+export const updateEvent = async (
+  req: Request<
+    {
+      eventId: string;
+    },
+    EventResponse,
+    UpdateEventRequest
+  >,
+  res: Response<EventResponse | ErrorResponse>
+): Promise<void> => {
   try {
     const event = await Event.findById(req.params.eventId);
     if (!event) {
-      res.status(404).json({message: 'Event not found'});
+      res.status(404).json({ message: 'Event not found' });
       return;
     }
 
     if (event.creator.toString() !== req.user?.id) {
-      res.status(403).json({message: 'User not authorized to update this event'});
+      res.status(403).json({ message: 'User not authorized to update this event' });
       return;
     }
 
@@ -271,53 +295,61 @@ export const updateEvent = async (req: Request<{
       .populate('participants', 'username avatar');
 
     if (!populatedEvent) {
-      res.status(500).json({message: 'Error updating event'});
+      res.status(500).json({ message: 'Error updating event' });
       return;
     }
 
     res.status(200).json(populatedEvent as unknown as EventResponse);
   } catch (error) {
-    res.status(500).json({message: 'Error updating event', error: (error as Error).message});
+    res.status(500).json({ message: 'Error updating event', error: (error as Error).message });
   }
 };
 
 // Delete an event
-export const deleteEvent = async (req: Request<{ eventId: string }>, res: Response<{
-  message: string;
-  error?: string
-}>): Promise<void> => {
+export const deleteEvent = async (
+  req: Request<{ eventId: string }>,
+  res: Response<{
+    message: string;
+    error?: string;
+  }>
+): Promise<void> => {
   try {
     const event = await Event.findById(req.params.eventId);
     if (!event) {
-      res.status(404).json({message: 'Event not found'});
+      res.status(404).json({ message: 'Event not found' });
       return;
     }
 
     if (event.creator.toString() !== req.user?.id) {
-      res.status(403).json({message: 'User not authorized to delete this event'});
+      res.status(403).json({ message: 'User not authorized to delete this event' });
       return;
     }
 
     await event.deleteOne();
-    res.status(200).json({message: 'Event deleted successfully'});
+    res.status(200).json({ message: 'Event deleted successfully' });
   } catch (error) {
-    res.status(500).json({message: 'Error deleting event', error: (error as Error).message});
+    res.status(500).json({ message: 'Error deleting event', error: (error as Error).message });
   }
 };
 
 // Toggle participation in an event (Join/Leave)
-export const toggleEventParticipation = async (req: Request<{
-  eventId: string
-}>, res: Response<EventResponse | ErrorResponse>): Promise<void> => {
+export const toggleEventParticipation = async (
+  req: Request<{
+    eventId: string;
+  }>,
+  res: Response<EventResponse | ErrorResponse>
+): Promise<void> => {
   try {
     const event = await Event.findById(req.params.eventId);
     if (!event) {
-      res.status(404).json({message: 'Event not found'});
+      res.status(404).json({ message: 'Event not found' });
       return;
     }
 
     const userId = req.user?.id;
-    const participantIndex = event.participants.findIndex((pId: Types.ObjectId) => pId.toString() === userId);
+    const participantIndex = event.participants.findIndex(
+      (pId: Types.ObjectId) => pId.toString() === userId
+    );
 
     if (participantIndex > -1) {
       // User is already a participant, so leave
@@ -333,12 +365,14 @@ export const toggleEventParticipation = async (req: Request<{
       .populate('participants', 'username avatar');
 
     if (!populatedEvent) {
-      res.status(500).json({message: 'Error toggling event participation'});
+      res.status(500).json({ message: 'Error toggling event participation' });
       return;
     }
 
     res.status(200).json(populatedEvent as unknown as EventResponse);
   } catch (error) {
-    res.status(500).json({message: 'Error toggling event participation', error: (error as Error).message});
+    res
+      .status(500)
+      .json({ message: 'Error toggling event participation', error: (error as Error).message });
   }
 };

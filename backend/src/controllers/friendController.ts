@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import type { Types } from 'mongoose';
-import type { IApiResponse, IFriendRequestDocument } from '../types/common';
+import type { IApiResponse, IFriendRequestDocument } from '../types/common.js';
 import User from '../models/User.js';
 import FriendRequest from '../models/FriendRequest.js';
 

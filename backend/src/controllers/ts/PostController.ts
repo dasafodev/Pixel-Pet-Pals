@@ -1,18 +1,14 @@
-
 import type { Request, Response } from 'express';
-import fs from 'fs';
-import path from 'path';
-import { PostService } from '../../services/PostService.js';
+import { PostService } from '@/services/PostService.js';
 import type {
-  CreatePostRequest,
-  UpdatePostRequest,
   AddCommentRequest,
+  CreatePostRequest,
+  ErrorResponse,
   GetAllPostsQuery,
-  PostResponse,
   GetAllPostsResponse,
-  ErrorResponse
-} from '../../dto/PostDto.js';
-import { transformPostData } from '../../dto/PostDto.js';
+  PostResponse,
+  UpdatePostRequest,
+} from '@/dto/PostDto.js';
 
 const postService = new PostService();
 
@@ -103,7 +99,9 @@ export const toggleLikePost = async (
     const result = await postService.toggleLikePost(req);
     res.status(result.status).json(result.data);
   } catch (error) {
-    res.status(500).json({ message: 'Error toggling like on post', error: (error as Error).message });
+    res
+      .status(500)
+      .json({ message: 'Error toggling like on post', error: (error as Error).message });
   }
 };
 
@@ -116,7 +114,9 @@ export const addCommentToPost = async (
     const result = await postService.addCommentToPost(req);
     res.status(result.status).json(result.data);
   } catch (error) {
-    res.status(500).json({ message: 'Error adding comment to post', error: (error as Error).message });
+    res
+      .status(500)
+      .json({ message: 'Error adding comment to post', error: (error as Error).message });
   }
 };
 

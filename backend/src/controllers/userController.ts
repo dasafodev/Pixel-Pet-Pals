@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import type { Types } from 'mongoose';
-import type { IApiResponse, IUserDocument } from '../types/common';
+import type { IApiResponse, IUserDocument } from '../types/common.js';
 import User from '../models/User.js';
 import FriendRequest from '../models/FriendRequest.js';
 
@@ -54,7 +54,10 @@ export const getUsers = async (req: Request, res: Response<UserListResponse>): P
 // @desc    Get user by ID
 // @route   GET /api/users/:id
 // @access  Private
-export const getUserById = async (req: Request<{ id: string }>, res: Response<UserResponse>): Promise<void> => {
+export const getUserById = async (
+  req: Request<{ id: string }>,
+  res: Response<UserResponse>
+): Promise<void> => {
   try {
     const user = await User.findById(req.params.id)
       .select('-password')
@@ -84,7 +87,10 @@ export const getUserById = async (req: Request<{ id: string }>, res: Response<Us
 // @desc    Update user profile
 // @route   PUT /api/users/profile
 // @access  Private
-export const updateProfile = async (req: Request<{}, UserResponse, UpdateProfileRequest>, res: Response<UserResponse>): Promise<void> => {
+export const updateProfile = async (
+  req: Request<{}, UserResponse, UpdateProfileRequest>,
+  res: Response<UserResponse>
+): Promise<void> => {
   try {
     const { username, password, avatar, petName, petAvatar, bio, toys: petToys } = req.body;
 
@@ -139,7 +145,10 @@ export const updateProfile = async (req: Request<{}, UserResponse, UpdateProfile
 // @desc    Search users
 // @route   GET /api/users/search
 // @access  Private
-export const searchUsers = async (req: Request<{}, UserListResponse, {}, SearchQuery>, res: Response<UserListResponse>): Promise<void> => {
+export const searchUsers = async (
+  req: Request<{}, UserListResponse, {}, SearchQuery>,
+  res: Response<UserListResponse>
+): Promise<void> => {
   try {
     const { query } = req.query;
     const currentUserId = req.user!.id;
