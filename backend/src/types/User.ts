@@ -54,7 +54,7 @@ export interface IUserResponse {
 }
 
 export interface IUserSearchResult {
-  _id: string;
+  _id: string | Types.ObjectId;
   username: string;
   avatar: string;
   petName: string;
@@ -67,4 +67,4 @@ export interface IUserSearchFilters {
   excludeIds?: string[];
   limit?: number;
   skip?: number;
-} 
+}

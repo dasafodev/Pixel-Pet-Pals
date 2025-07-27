@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { UserRoutes } from './UserRoutes';
+import { UserRoutes } from './UserRoutes.js';
 
 export class Routes {
-  private router: Router;
+  private readonly router: Router;
 
   constructor() {
     this.router = Router();
@@ -18,4 +18,4 @@ export class Routes {
   public getRouter(): Router {
     return this.router;
   }
-} 
+}

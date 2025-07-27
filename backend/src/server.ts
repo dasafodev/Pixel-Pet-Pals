@@ -1,15 +1,11 @@
 import dotenv from 'dotenv';
-// Load environment variables AT THE VERY TOP
-dotenv.config();
-
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import http from 'http';
-import { Server as SocketIOServer } from 'socket.io';
 import type { Socket } from 'socket.io';
+import { Server as SocketIOServer } from 'socket.io';
 import authRoutes from './routes/auth.js';
-import userRoutes from './routes/users.js';
 import friendRoutes from './routes/friends.js';
 import messageRoutes from './routes/messages.js';
 import aiRoutes from './routes/ai.js';
@@ -18,6 +14,9 @@ import eventRoutes from './routes/events.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import Message from './models/Message.js';
+import { Routes } from '@/routes/ts/index.js';
+// Load environment variables AT THE VERY TOP
+dotenv.config();
 
 // Get __dirname equivalent in ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -116,14 +115,24 @@ io.on('connection', (socket: Socket) => {
   });
 });
 
+/**
+ * Initialize New Routes
+ */
+const apiRoutes = new Routes();
+
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
+// app.use('/api/users', userRoutes);
 app.use('/api/friends', friendRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/events', eventRoutes);
+
+/**
+ * New Routes
+ */
+app.use('/api', apiRoutes.getRouter());
 
 // Root route
 app.get('/', (req, res) => {

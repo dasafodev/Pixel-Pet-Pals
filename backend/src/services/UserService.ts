@@ -1,6 +1,12 @@
-import { UserRepository } from '../repositories/UserRepository';
-import { IUser, IUserCreate, IUserUpdate, IUserSearchFilters, IUserSearchResult } from '../types/User';
-import { CreateUserDto, UpdateUserDto, SearchUserDto } from '../dto/UserDto';
+import { UserRepository } from '../repositories/UserRepository.js';
+import type {
+  IUser,
+  IUserCreate,
+  IUserUpdate,
+  IUserSearchFilters,
+  IUserSearchResult,
+} from '../types/User.js';
+import type { CreateUserDto, UpdateUserDto, SearchUserDto } from '../dto/UserDto.js';
 
 export class UserService {
   private userRepository: UserRepository;
@@ -66,7 +72,7 @@ export class UserService {
       avatar: userData.avatar || '/avatars/avatar_1.png',
       petAvatar: userData.petAvatar || '/pets/pet_1.png',
       petToys: userData.petToys || [],
-      bio: userData.bio || ''
+      bio: userData.bio || '',
     };
 
     return await this.userRepository.create(userToCreate);
@@ -88,7 +94,10 @@ export class UserService {
         throw new Error('Username must be between 3 and 20 characters');
       }
 
-      const isUsernameTaken = await this.userRepository.isUsernameTaken(updateData.username, userId);
+      const isUsernameTaken = await this.userRepository.isUsernameTaken(
+        updateData.username,
+        userId
+      );
       if (isUsernameTaken) {
         throw new Error('Username already taken');
       }
@@ -115,7 +124,11 @@ export class UserService {
   /**
    * Search users with advanced filtering
    */
-  async searchUsers(searchData: SearchUserDto, currentUserId: string, excludeFriends: boolean = true): Promise<IUserSearchResult[]> {
+  async searchUsers(
+    searchData: SearchUserDto,
+    currentUserId: string,
+    excludeFriends: boolean = true
+  ): Promise<IUserSearchResult[]> {
     if (!searchData.query || searchData.query.trim().length === 0) {
       throw new Error('Search query is required');
     }
@@ -124,7 +137,7 @@ export class UserService {
       query: searchData.query.trim(),
       limit: searchData.limit || 50,
       skip: searchData.skip || 0,
-      excludeIds: [currentUserId]
+      excludeIds: [currentUserId],
     };
 
     // If excluding friends, get current user's friends and add to exclude list
@@ -133,7 +146,7 @@ export class UserService {
       if (currentUser && currentUser.friends) {
         filters.excludeIds = [
           ...filters.excludeIds!,
-          ...currentUser.friends.map(friend => friend.toString())
+          ...currentUser.friends.map(friend => friend.toString()),
         ];
       }
     }
@@ -194,7 +207,7 @@ export class UserService {
 
     return {
       totalUsers,
-      userFriends
+      userFriends,
     };
   }
 
@@ -210,4 +223,4 @@ export class UserService {
     const isValidPassword = await user.comparePassword(password);
     return isValidPassword ? user : null;
   }
-} 
+}
