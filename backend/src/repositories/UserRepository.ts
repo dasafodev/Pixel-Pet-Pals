@@ -1,6 +1,5 @@
-import { Types } from 'mongoose';
-import User from '../models/User';
-import { IUser, IUserSearchFilters, IUserSearchResult } from '../types/User';
+import User from '../models/User.js';
+import type { IUser, IUserSearchFilters, IUserSearchResult } from '../types/User.js';
 
 export class UserRepository {
   /**
@@ -27,28 +26,28 @@ export class UserRepository {
    * Find user by ID without password
    */
   async findById(userId: string): Promise<IUser | null> {
-    return (await User.findById(userId).select('-password').lean()) as unknown as IUser | null;
+    return User.findById(userId).select('-password');
   }
 
   /**
    * Find user by ID with password (for authentication)
    */
   async findByIdWithPassword(userId: string): Promise<IUser | null> {
-    return await User.findById(userId);
+    return User.findById(userId);
   }
 
   /**
    * Find user by email
    */
   async findByEmail(email: string): Promise<IUser | null> {
-    return await User.findOne({ email });
+    return User.findOne({ email });
   }
 
   /**
    * Find user by username
    */
   async findByUsername(username: string): Promise<IUser | null> {
-    return await User.findOne({ username });
+    return User.findOne({ username });
   }
 
   /**
@@ -63,10 +62,10 @@ export class UserRepository {
         {
           $or: [
             { username: { $regex: query, $options: 'i' } },
-            { petName: { $regex: query, $options: 'i' } }
-          ]
-        }
-      ]
+            { petName: { $regex: query, $options: 'i' } },
+          ],
+        },
+      ],
     };
 
     return (await User.find(searchQuery)
@@ -89,11 +88,7 @@ export class UserRepository {
    * Update user by ID
    */
   async updateById(userId: string, updateData: Partial<IUser>): Promise<IUser | null> {
-    return await User.findByIdAndUpdate(
-      userId,
-      updateData,
-      { new: true, runValidators: true }
-    );
+    return User.findByIdAndUpdate(userId, updateData, { new: true, runValidators: true });
   }
 
   /**
@@ -108,29 +103,21 @@ export class UserRepository {
    * Add friend to user
    */
   async addFriend(userId: string, friendId: string): Promise<IUser | null> {
-    return await User.findByIdAndUpdate(
-      userId,
-      { $addToSet: { friends: friendId } },
-      { new: true }
-    );
+    return User.findByIdAndUpdate(userId, { $addToSet: { friends: friendId } }, { new: true });
   }
 
   /**
    * Remove friend from user
    */
   async removeFriend(userId: string, friendId: string): Promise<IUser | null> {
-    return await User.findByIdAndUpdate(
-      userId,
-      { $pull: { friends: friendId } },
-      { new: true }
-    );
+    return User.findByIdAndUpdate(userId, { $pull: { friends: friendId } }, { new: true });
   }
 
   /**
    * Add friend request
    */
   async addFriendRequest(userId: string, requestId: string): Promise<IUser | null> {
-    return await User.findByIdAndUpdate(
+    return User.findByIdAndUpdate(
       userId,
       { $addToSet: { friendRequests: requestId } },
       { new: true }
@@ -141,18 +128,14 @@ export class UserRepository {
    * Remove friend request
    */
   async removeFriendRequest(userId: string, requestId: string): Promise<IUser | null> {
-    return await User.findByIdAndUpdate(
-      userId,
-      { $pull: { friendRequests: requestId } },
-      { new: true }
-    );
+    return User.findByIdAndUpdate(userId, { $pull: { friendRequests: requestId } }, { new: true });
   }
 
   /**
    * Get users count
    */
   async count(): Promise<number> {
-    return await User.countDocuments();
+    return User.countDocuments();
   }
 
   /**
@@ -178,4 +161,4 @@ export class UserRepository {
     const user = await User.findOne(query);
     return user !== null;
   }
-} 
+}

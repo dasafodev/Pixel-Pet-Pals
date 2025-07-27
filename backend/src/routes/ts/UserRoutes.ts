@@ -1,9 +1,10 @@
 import { Router } from 'express';
-import { UserController } from '../../controllers/ts/UserController';
+import { UserController } from '../../controllers/ts/UserController.js';
+import { protect } from '../../middleware/auth.js';
 
 export class UserRoutes {
-  private router: Router;
-  private userController: UserController;
+  private readonly router: Router;
+  private readonly userController: UserController;
 
   constructor() {
     this.router = Router();
@@ -13,6 +14,8 @@ export class UserRoutes {
 
   private initializeRoutes(): void {
     // Get all users
+    this.router.use(protect);
+
     this.router.get('/', this.userController.getUsers.bind(this.userController));
 
     // Search users
@@ -28,7 +31,10 @@ export class UserRoutes {
     this.router.post('/friends/:friendId', this.userController.addFriend.bind(this.userController));
 
     // Remove friend
-    this.router.delete('/friends/:friendId', this.userController.removeFriend.bind(this.userController));
+    this.router.delete(
+      '/friends/:friendId',
+      this.userController.removeFriend.bind(this.userController)
+    );
 
     // Get user by ID (must be last to avoid conflicts with other routes)
     this.router.get('/:id', this.userController.getUserById.bind(this.userController));
@@ -37,4 +43,4 @@ export class UserRoutes {
   public getRouter(): Router {
     return this.router;
   }
-} 
+}

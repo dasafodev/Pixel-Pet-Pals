@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
-import { UserService } from '../../services/UserService';
-import { CreateUserDto, UpdateUserDto, SearchUserDto } from '../../dto/UserDto';
+import type { Request, Response } from 'express';
+import { UserService } from '../../services/UserService.js';
+import type { UpdateUserDto, SearchUserDto } from '../../dto/UserDto.js';
 
 export class UserController {
   private userService: UserService;
@@ -22,13 +22,13 @@ export class UserController {
       res.status(200).json({
         success: true,
         count: users.length,
-        users
+        users,
       });
     } catch (error) {
       res.status(500).json({
         success: false,
         message: 'Server error',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -40,35 +40,26 @@ export class UserController {
    */
   async getUserById(req: Request, res: Response): Promise<void> {
     try {
-      const userId = req.params.id;
-      
-      if (!userId) {
-        res.status(400).json({
-          success: false,
-          message: 'User ID is required'
-        });
-        return;
-      }
-      
+      const userId = req.params.id!;
       const user = await this.userService.getUserById(userId);
 
       if (!user) {
         res.status(404).json({
           success: false,
-          message: 'User not found'
+          message: 'User not found',
         });
         return;
       }
 
       res.status(200).json({
         success: true,
-        user
+        user,
       });
     } catch (error) {
       res.status(500).json({
         success: false,
         message: 'Server error',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -88,7 +79,7 @@ export class UserController {
       if (!updatedUser) {
         res.status(404).json({
           success: false,
-          message: 'User not found'
+          message: 'User not found',
         });
         return;
       }
@@ -99,21 +90,21 @@ export class UserController {
 
       res.status(200).json({
         success: true,
-        user: userResponse
+        user: userResponse,
       });
     } catch (error) {
       if (error instanceof Error) {
         if (error.message.includes('Username already taken')) {
           res.status(400).json({
             success: false,
-            message: error.message
+            message: error.message,
           });
           return;
         }
         if (error.message.includes('User not found')) {
           res.status(404).json({
             success: false,
-            message: error.message
+            message: error.message,
           });
           return;
         }
@@ -122,7 +113,7 @@ export class UserController {
       res.status(500).json({
         success: false,
         message: 'Server error',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -138,13 +129,13 @@ export class UserController {
       const searchData: SearchUserDto = {
         query: req.query.query as string,
         limit: req.query.limit ? parseInt(req.query.limit as string) : undefined,
-        skip: req.query.skip ? parseInt(req.query.skip as string) : undefined
+        skip: req.query.skip ? parseInt(req.query.skip as string) : undefined,
       };
 
       if (!searchData.query) {
         res.status(400).json({
           success: false,
-          message: 'Please provide a search query'
+          message: 'Please provide a search query',
         });
         return;
       }
@@ -154,13 +145,13 @@ export class UserController {
       res.status(200).json({
         success: true,
         count: users.length,
-        users
+        users,
       });
     } catch (error) {
       if (error instanceof Error && error.message.includes('Search query is required')) {
         res.status(400).json({
           success: false,
-          message: error.message
+          message: error.message,
         });
         return;
       }
@@ -168,7 +159,7 @@ export class UserController {
       res.status(500).json({
         success: false,
         message: 'Server error',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -181,7 +172,7 @@ export class UserController {
   async addFriend(req: Request, res: Response): Promise<void> {
     try {
       const currentUserId = (req as any).user.id;
-      const friendId = req.params.friendId;
+      const friendId = req.params.friendId!;
 
       if (!currentUserId) {
         res.status(401).json({
@@ -204,21 +195,21 @@ export class UserController {
       res.status(200).json({
         success: true,
         message: 'Friend added successfully',
-        user: updatedUser
+        user: updatedUser,
       });
     } catch (error) {
       if (error instanceof Error) {
         if (error.message.includes('User or friend not found')) {
           res.status(404).json({
             success: false,
-            message: error.message
+            message: error.message,
           });
           return;
         }
         if (error.message.includes('Already friends')) {
           res.status(400).json({
             success: false,
-            message: error.message
+            message: error.message,
           });
           return;
         }
@@ -227,7 +218,7 @@ export class UserController {
       res.status(500).json({
         success: false,
         message: 'Server error',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -240,7 +231,7 @@ export class UserController {
   async removeFriend(req: Request, res: Response): Promise<void> {
     try {
       const currentUserId = (req as any).user.id;
-      const friendId = req.params.friendId;
+      const friendId = req.params.friendId!;
 
       if (!currentUserId) {
         res.status(401).json({
@@ -263,14 +254,14 @@ export class UserController {
       res.status(200).json({
         success: true,
         message: 'Friend removed successfully',
-        user: updatedUser
+        user: updatedUser,
       });
     } catch (error) {
       if (error instanceof Error) {
         if (error.message.includes('User or friend not found')) {
           res.status(404).json({
             success: false,
-            message: error.message
+            message: error.message,
           });
           return;
         }
@@ -279,7 +270,7 @@ export class UserController {
       res.status(500).json({
         success: false,
         message: 'Server error',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -296,14 +287,14 @@ export class UserController {
 
       res.status(200).json({
         success: true,
-        stats
+        stats,
       });
     } catch (error) {
       res.status(500).json({
         success: false,
         message: 'Server error',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
-} 
+}

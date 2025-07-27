@@ -1,8 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { Routes } from './routes/ts';
-import { protect } from './middleware/ts/auth';
+import { Routes } from './routes/ts/index.js';
+import { protect } from './middleware/ts/auth.js';
 
 // Load environment variables
 dotenv.config();
@@ -56,4 +56,4 @@ app.listen(PORT, () => {
   console.log(`🔗 Health check: http://localhost:${PORT}/health`);
 });
 
-export default app; 
+export default app;
