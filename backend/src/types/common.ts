@@ -22,7 +22,7 @@ export interface IUserMethods {
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
-export interface IUserDocument extends IUser, IUserMethods, Document {}
+export interface IUserDocument extends IUser, IUserMethods, Document<Types.ObjectId> {}
 
 // Message Types
 export interface IMessage {
