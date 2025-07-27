@@ -83,19 +83,25 @@ Esta modernización introduce una arquitectura de capas bien definida para el ba
 src/
 ├── controllers/
 │   ├── ts/
-│   │   └── UserController.ts
-│   └── userController.js (legacy)
+│   │   ├── UserController.ts
+│   │   └── PostController.ts
+│   ├── userController.js (legacy)
+│   └── postController.js (legacy)
 ├── routes/
 │   ├── ts/
 │   │   ├── UserRoutes.ts
 │   │   └── index.ts
-│   └── users.js (legacy)
+│   ├── users.js (legacy)
+│   └── posts.ts
 ├── services/
-│   └── UserService.ts
+│   ├── UserService.ts
+│   └── PostService.ts
 ├── repositories/
-│   └── UserRepository.ts
+│   ├── UserRepository.ts
+│   └── PostRepository.ts
 ├── dto/
-│   └── UserDto.ts
+│   ├── UserDto.ts
+|   └── PostDto.ts
 ├── types/
 │   ├── User.ts
 │   └── express.d.ts
@@ -115,7 +121,7 @@ src/
 - `DELETE /api/users/friends/:friendId` - Remover amigo
 - `GET /api/users/stats` - Obtener estadísticas del usuario
 
-- ### Posts
+### Posts
 - `GET /api/posts` - Obtener todas las publicaciones
 - `GET /api/posts/:postId` - Obtener publicación por ID
 - `GET /api/posts/user/:userId` - Obtener todas las publicaciones de un usuario
