@@ -1,17 +1,7 @@
-
 import { Types } from 'mongoose';
 import { PostRepository } from '../repositories/PostRepository.js';
 import fs from 'fs';
 import path from 'path';
-import type {
-  CreatePostRequest,
-  UpdatePostRequest,
-  AddCommentRequest,
-  GetAllPostsQuery,
-  PostResponse,
-  GetAllPostsResponse,
-  ErrorResponse
-} from '../dto/PostDto.js';
 import { transformPostData } from '../dto/PostDto.js';
 
 const postRepository = new PostRepository();
@@ -36,7 +26,9 @@ export class PostService {
         imageUrls: imageUrls,
       };
       const post = await postRepository.create(newPostData);
-      const populatedPost = await postRepository.findById((post as { _id: Types.ObjectId })._id.toString());
+      const populatedPost = await postRepository.findById(
+        (post as { _id: Types.ObjectId })._id.toString()
+      );
       if (!populatedPost) {
         return { status: 500, data: { message: 'Error creating post' } };
       }
@@ -57,14 +49,18 @@ export class PostService {
             file.filename
           );
           fs.unlink(filePath, err => {
-            if (err) console.error('Error deleting uploaded file after post creation failure:', err);
+            if (err)
+              console.error('Error deleting uploaded file after post creation failure:', err);
           });
         });
       }
       if (error instanceof Error && error.name === 'ValidationError') {
         return { status: 400, data: { message: error.message } };
       }
-      return { status: 500, data: { message: 'Error creating post', error: (error as Error).message } };
+      return {
+        status: 500,
+        data: { message: 'Error creating post', error: (error as Error).message },
+      };
     }
   }
 
@@ -77,7 +73,9 @@ export class PostService {
       }
       const posts = await postRepository.findAll(query, limit, page);
       const count = await postRepository.count(query);
-      const transformedPosts = posts.map((post: any) => transformPostData(post, process.env.BACKEND_URL));
+      const transformedPosts = posts.map((post: any) =>
+        transformPostData(post, process.env.BACKEND_URL)
+      );
       return {
         status: 200,
         data: {
@@ -88,7 +86,10 @@ export class PostService {
         },
       };
     } catch (error) {
-      return { status: 500, data: { message: 'Error fetching posts', error: (error as Error).message } };
+      return {
+        status: 500,
+        data: { message: 'Error fetching posts', error: (error as Error).message },
+      };
     }
   }
 
@@ -99,10 +100,15 @@ export class PostService {
       if (!posts) {
         return { status: 200, data: [] };
       }
-      const transformedPosts = posts.map((post: any) => transformPostData(post, process.env.BACKEND_URL));
+      const transformedPosts = posts.map((post: any) =>
+        transformPostData(post, process.env.BACKEND_URL)
+      );
       return { status: 200, data: transformedPosts };
     } catch (error) {
-      return { status: 500, data: { message: 'Error fetching user posts', error: (error as Error).message } };
+      return {
+        status: 500,
+        data: { message: 'Error fetching user posts', error: (error as Error).message },
+      };
     }
   }
 
@@ -115,7 +121,10 @@ export class PostService {
       const transformed = transformPostData(post, process.env.BACKEND_URL);
       return { status: 200, data: transformed };
     } catch (error) {
-      return { status: 500, data: { message: 'Error fetching post', error: (error as Error).message } };
+      return {
+        status: 500,
+        data: { message: 'Error fetching post', error: (error as Error).message },
+      };
     }
   }
 
@@ -132,7 +141,9 @@ export class PostService {
       if (content) post.content = content;
       post.updatedAt = new Date();
       await post.save();
-      const populatedPost = await postRepository.findById((post as { _id: Types.ObjectId })._id.toString());
+      const populatedPost = await postRepository.findById(
+        (post as { _id: Types.ObjectId })._id.toString()
+      );
       if (!populatedPost) {
         return { status: 500, data: { message: 'Error updating post' } };
       }
@@ -142,7 +153,10 @@ export class PostService {
       if (error instanceof Error && error.name === 'ValidationError') {
         return { status: 400, data: { message: error.message } };
       }
-      return { status: 500, data: { message: 'Error updating post', error: (error as Error).message } };
+      return {
+        status: 500,
+        data: { message: 'Error updating post', error: (error as Error).message },
+      };
     }
   }
 
@@ -168,7 +182,10 @@ export class PostService {
       await post.deleteOne();
       return { status: 200, data: { message: 'Post deleted successfully' } };
     } catch (error) {
-      return { status: 500, data: { message: 'Error deleting post', error: (error as Error).message } };
+      return {
+        status: 500,
+        data: { message: 'Error deleting post', error: (error as Error).message },
+      };
     }
   }
 
@@ -186,14 +203,19 @@ export class PostService {
         post.likes.push(new Types.ObjectId(userId));
       }
       await post.save();
-      const populatedPost = await postRepository.findById((post as { _id: Types.ObjectId })._id.toString());
+      const populatedPost = await postRepository.findById(
+        (post as { _id: Types.ObjectId })._id.toString()
+      );
       if (!populatedPost) {
         return { status: 500, data: { message: 'Error updating post like' } };
       }
       const transformed = transformPostData(populatedPost, process.env.BACKEND_URL);
       return { status: 200, data: transformed };
     } catch (error) {
-      return { status: 500, data: { message: 'Error toggling like on post', error: (error as Error).message } };
+      return {
+        status: 500,
+        data: { message: 'Error toggling like on post', error: (error as Error).message },
+      };
     }
   }
 
@@ -214,14 +236,19 @@ export class PostService {
       };
       post.comments.push(newComment);
       await post.save();
-      const populatedPost = await postRepository.findById((post as { _id: Types.ObjectId })._id.toString());
+      const populatedPost = await postRepository.findById(
+        (post as { _id: Types.ObjectId })._id.toString()
+      );
       if (!populatedPost) {
         return { status: 500, data: { message: 'Error adding comment' } };
       }
       const transformed = transformPostData(populatedPost, process.env.BACKEND_URL);
       return { status: 201, data: transformed };
     } catch (error) {
-      return { status: 500, data: { message: 'Error adding comment to post', error: (error as Error).message } };
+      return {
+        status: 500,
+        data: { message: 'Error adding comment to post', error: (error as Error).message },
+      };
     }
   }
 
@@ -241,14 +268,19 @@ export class PostService {
       }
       post.comments = post.comments.filter((c: any) => c._id?.toString() !== commentId);
       await post.save();
-      const populatedPost = await postRepository.findById((post as { _id: Types.ObjectId })._id.toString());
+      const populatedPost = await postRepository.findById(
+        (post as { _id: Types.ObjectId })._id.toString()
+      );
       if (!populatedPost) {
         return { status: 500, data: { message: 'Error deleting comment' } };
       }
       const transformed = transformPostData(populatedPost, process.env.BACKEND_URL);
       return { status: 200, data: transformed };
     } catch (error) {
-      return { status: 500, data: { message: 'Error deleting comment', error: (error as Error).message } };
+      return {
+        status: 500,
+        data: { message: 'Error deleting comment', error: (error as Error).message },
+      };
     }
   }
 }

@@ -1,5 +1,5 @@
 import Post from '../models/Post.js';
-import type { IPostDocument } from '../types/common';
+import type { IPostDocument } from '../types/common.js';
 
 export class PostRepository {
   async create(postData: Partial<IPostDocument>) {

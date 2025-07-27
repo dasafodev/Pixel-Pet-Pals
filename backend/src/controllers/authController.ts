@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import type { Types } from 'mongoose';
-import type { IAuthResponse, IApiResponse } from '../types/common';
+import type { IAuthResponse } from '../types/common.js';
 import User from '../models/User.js';
 import { generateToken } from '../middleware/auth.js';
 
@@ -20,7 +20,10 @@ interface LoginRequest {
 // @desc    Register a new user
 // @route   POST /api/auth/register
 // @access  Public
-export const register = async (req: Request<{}, IAuthResponse, RegisterRequest>, res: Response<IAuthResponse>): Promise<void> => {
+export const register = async (
+  req: Request<{}, IAuthResponse, RegisterRequest>,
+  res: Response<IAuthResponse>
+): Promise<void> => {
   try {
     const { username, email, password, petName, petAvatar } = req.body;
 
@@ -72,7 +75,10 @@ export const register = async (req: Request<{}, IAuthResponse, RegisterRequest>,
 // @desc    Login user
 // @route   POST /api/auth/login
 // @access  Public
-export const login = async (req: Request<{}, IAuthResponse, LoginRequest>, res: Response<IAuthResponse>): Promise<void> => {
+export const login = async (
+  req: Request<{}, IAuthResponse, LoginRequest>,
+  res: Response<IAuthResponse>
+): Promise<void> => {
   try {
     const { username, password } = req.body;
 

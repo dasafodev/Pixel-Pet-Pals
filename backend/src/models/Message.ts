@@ -1,6 +1,5 @@
-import { Schema, model, type Model } from 'mongoose';
-import type { Document, Types } from 'mongoose';
-import type { IMessageDocument } from '../types/common';
+import { model, type Model, Schema } from 'mongoose';
+import type { IMessageDocument } from '../types/common.js';
 
 // Message model interface
 interface IMessageModel extends Model<IMessageDocument> {}
