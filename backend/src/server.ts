@@ -14,7 +14,7 @@ import eventRoutes from './routes/events.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import Message from './models/Message.js';
-import { Routes } from '@/routes/ts/index.js';
+import { Routes } from './routes/ts/index.js';
 // Load environment variables AT THE VERY TOP
 dotenv.config();
 
