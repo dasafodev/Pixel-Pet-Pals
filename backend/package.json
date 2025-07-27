@@ -5,6 +5,10 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "dev:ts": "ts-node src/server.ts",
+    "test:server": "ts-node src/test-server.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -24,6 +28,15 @@
     "socket.io": "^4.6.1"
   },
   "devDependencies": {
-    "nodemon": "^2.0.22"
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^4.17.23",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/mongoose": "^5.11.97",
+    "@types/multer": "^1.4.13",
+    "@types/node": "^20.19.9",
+    "nodemon": "^2.0.22",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
   }
 }
